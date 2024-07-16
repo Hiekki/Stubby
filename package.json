@@ -9,7 +9,9 @@
         "dev": "nodemon -I --exec npx ts-node ./src/Bot.ts",
         "build": "shx rm -rf dist && tsc",
         "format": "prettier --write \"**/*.ts\"",
-        "setup": "npm i"
+        "setup": "npm i",
+        "pull": "git pull && npm run build && npm start",
+        "generate": "git pull && npx prisma generate && npm run build && npm start"
     },
     "keywords": [],
     "author": "Hiekki",
