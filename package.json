@@ -10,7 +10,7 @@
         "build": "shx rm -rf dist && tsc",
         "format": "prettier --write \"**/*.ts\"",
         "setup": "npm i",
-        "pull": "git pull && npm run build && npm start",
+        "pull": "git pull && npm i && npm run build && npm start",
         "generate": "git pull && npx prisma generate && npm run build && npm start"
     },
     "keywords": [],
