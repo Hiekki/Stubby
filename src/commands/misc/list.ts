@@ -8,7 +8,8 @@ export default class List extends Command<Stubby> {
     id = 'list';
     definition = new CommandBuilder('list', 'List all tickets in this server')
         .setCommandType(Constants.ApplicationCommandType.ChatInput)
-        .setMemberPermission(Constants.PermissionFlagsBits.ManageThreads);
+        .setMemberPermission(Constants.PermissionFlagsBits.ManageThreads)
+        .setContexts([Constants.InteractionContextType.Guild]);
 
     async handleCommand(caller: Stubby, command: CommandInteraction) {
         try {

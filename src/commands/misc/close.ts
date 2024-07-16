@@ -7,6 +7,7 @@ export default class Close extends Command<Stubby> {
     definition = new CommandBuilder('close', 'Close an individual ticket')
         .setCommandType(Constants.ApplicationCommandType.ChatInput)
         .setMemberPermission(Constants.PermissionFlagsBits.ManageThreads)
+        .setContexts([Constants.InteractionContextType.Guild])
         .addBooleanOption('delete', 'Delete the ticket permanently')
         .addBooleanOption('lock', 'Lock the ticket so that it cannot be talked in anymore');
 

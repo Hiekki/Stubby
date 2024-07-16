@@ -8,6 +8,7 @@ export default class Delete extends Command<Stubby> {
     definition = new CommandBuilder('delete', 'Delete a ticket system')
         .setCommandType(Constants.ApplicationCommandType.ChatInput)
         .setMemberPermission(Constants.PermissionFlagsBits.ManageThreads)
+        .setContexts([Constants.InteractionContextType.Guild])
         .addStringOption({ name: 'ticket', description: 'The ticket to delete', required: true, autocomplete: true });
 
     async handleCommand(caller: Stubby, command: CommandInteraction) {

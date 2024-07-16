@@ -9,6 +9,7 @@ export default class Create extends Command<Stubby> {
     definition = new CommandBuilder('create', 'Create a new ticket system')
         .setCommandType(Constants.ApplicationCommandType.ChatInput)
         .setMemberPermission(Constants.PermissionFlagsBits.ManageThreads)
+        .setContexts([Constants.InteractionContextType.Guild])
         .addChannelOption('channel', 'The channel to create the ticket in', true, [Constants.ChannelType.GuildText]);
 
     async handleCommand(caller: Stubby, command: CommandInteraction) {

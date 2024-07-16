@@ -18,9 +18,10 @@ type RolesEdit = [Role | null, Role | null, Role | null];
 
 export default class Category extends Command<Stubby> {
     id = 'category';
-    definition = new CommandBuilder('category', 'Category Commands')
+    definition = new CommandBuilder('category', 'Create, edit, or delete a category for a ticket system')
         .setCommandType(Constants.ApplicationCommandType.ChatInput)
         .setMemberPermission(Constants.PermissionFlagsBits.ManageThreads)
+        .setContexts([Constants.InteractionContextType.Guild])
         .addSubcommand('create', 'Create a new category', (sub) => {
             sub.addStringOption({
                 name: 'ticket',

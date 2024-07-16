@@ -15,6 +15,7 @@ export default class Edit extends Command<Stubby> {
     definition = new CommandBuilder('edit', 'Edit a ticket system')
         .setCommandType(Constants.ApplicationCommandType.ChatInput)
         .setMemberPermission(Constants.PermissionFlagsBits.ManageThreads)
+        .setContexts([Constants.InteractionContextType.Guild])
         .addStringOption({ name: 'ticket', description: 'The ticket to edit', required: true, autocomplete: true });
 
     async handleCommand(caller: Stubby, command: CommandInteraction) {
