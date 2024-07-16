@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Guild {
+  id        Int      @id @default(autoincrement())
+  guildID   String   @unique
+  guildName String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tickets Tickets[] @relation("GuildTickets")
+}
+
+model Tickets {
+  id          String   @id @unique
+  guildID     String
+  channelID   String
+  title       String
+  description String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  guild      Guild              @relation("GuildTickets", fields: [guildID], references: [guildID])
+  categories TicketCategories[] @relation("TicketCategories")
+}
+
+model TicketCategories {
+  id          Int      @id @default(autoincrement())
+  messageID   String
+  label       String
+  description String
+  role_one    String
+  role_two    String?
+  role_three  String?
+  emoji       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ticket Tickets @relation("TicketCategories", fields: [messageID], references: [id])
+}

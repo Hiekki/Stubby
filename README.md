@@ -1,2 +1,3 @@
-# StubHub
+# Stubby
+
 ticket bot
