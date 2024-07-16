@@ -11,7 +11,7 @@ export default class Ready extends EventBase {
         if (!this.enabled) return;
 
         caller.logger.info(`${caller.bot.user?.username} is ready on ${caller.bot.guilds.size} guilds.`);
-        caller.bot.setActivity(Constants.ActivityType.Playing, 'with Team Hydra');
+        caller.bot.setActivity(Constants.ActivityType.Watching, 'your tickets.');
 
         if (caller.config.FORCE_DEPLOY) await caller.bot.deployCommands();
         if (caller.dev) return;

@@ -1,4 +1,4 @@
-import { Command, CommandBuilder, CommandInteraction, Constants, Interaction } from 'athena';
+import { Command, CommandBuilder, CommandInteraction, Constants } from 'athena';
 import Stubby from '../../Bot';
 import { BotColors, BotEmojis } from '../../utils/constants';
 import { ConfirmAction, ErrorMessage, SuccessMessage } from '../../utils/message';
@@ -49,7 +49,7 @@ export default class Developer extends Command<Stubby> {
                                 break;
                             }
                         }
-                        await SuccessMessage(command, `${command.getString('area') ?? 'commands and events'} reloaded!`);
+                        await SuccessMessage(command, `${command.getString('area') ?? 'commands and events'} reloaded!`, true);
                     } catch (error) {
                         caller.logger.error(error);
                         await ErrorMessage(command, 'Failed to reload!', true);
@@ -59,7 +59,7 @@ export default class Developer extends Command<Stubby> {
                 case 'deploy': {
                     try {
                         await caller.bot.deployCommands();
-                        await SuccessMessage(command, 'Commands deployed!');
+                        await SuccessMessage(command, 'Commands deployed!', true);
                     } catch (error) {
                         caller.logger.error(error);
                         await ErrorMessage(command, 'Failed to deploy commands!', true);
@@ -78,6 +78,7 @@ export default class Developer extends Command<Stubby> {
                                     color: BotColors.blurple,
                                 },
                             ],
+                            flags: Constants.MessageFlags.Ephemeral,
                         },
                         60,
                         false,
@@ -86,7 +87,7 @@ export default class Developer extends Command<Stubby> {
                     );
 
                     if (confirmation.timeout) {
-                        await confirmation.message.edit({
+                        await command.editOriginalMessage({
                             embeds: [
                                 {
                                     title: `Nuke Guild Commands: Timed Out`,
@@ -100,7 +101,7 @@ export default class Developer extends Command<Stubby> {
 
                     const confirmed = confirmation.result;
 
-                    await confirmation.message.edit({
+                    await command.editOriginalMessage({
                         embeds: [
                             {
                                 title: `Nuked Guild Commands: ${confirmed ? `Success ${BotEmojis.greenTick.full}` : `Cancelled ${BotEmojis.redX.full}`}`,
@@ -110,7 +111,6 @@ export default class Developer extends Command<Stubby> {
                                 color: confirmed ? BotColors.green : BotColors.red,
                             },
                         ],
-                        components: [],
                     });
                     break;
                 }
@@ -123,12 +123,21 @@ export default class Developer extends Command<Stubby> {
                         if (evaled.length > 1960) {
                             await command.createMessage({
                                 content: '```Result longer then 2000 characters so it was logged to console.```',
+                                flags: Constants.MessageFlags.Ephemeral,
                             });
                             console.log(evaled);
-                        } else if (evaled === undefined) await command.createMessage({ content: `\`\`\`json\n${evaled}\n\`\`\`` });
-                        else await command.createMessage({ content: `\`\`\`json\n${evaled}\n\`\`\`` });
+                        } else if (evaled === undefined)
+                            await command.createMessage({
+                                content: `\`\`\`json\n${evaled}\n\`\`\``,
+                                flags: Constants.MessageFlags.Ephemeral,
+                            });
+                        else
+                            await command.createMessage({
+                                content: `\`\`\`json\n${evaled}\n\`\`\``,
+                                flags: Constants.MessageFlags.Ephemeral,
+                            });
                     } catch (e) {
-                        await command.createMessage({ content: `\`\`\`json\n${e}\n\`\`\`` });
+                        await command.createMessage({ content: `\`\`\`json\n${e}\n\`\`\``, flags: Constants.MessageFlags.Ephemeral });
                     }
                     break;
                 }
@@ -140,7 +149,7 @@ export default class Developer extends Command<Stubby> {
                     else {
                         try {
                             await guild.leave();
-                            await SuccessMessage(command, `Left guild: ${guild.name} (${guild.id})`);
+                            await SuccessMessage(command, `Left guild: ${guild.name} (${guild.id})`, true);
                         } catch (error) {
                             caller.logger.error(error);
                             await ErrorMessage(command, 'Failed to leave guild!', true);

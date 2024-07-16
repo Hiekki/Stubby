@@ -28,12 +28,24 @@ export default class Stubby {
 
     constructor() {
         this.utils = new Utils(this);
-        this.parsing = new Parsing(this);
         this.bot = new CommandClient({
             token: `Bot ${this.config.TOKEN}`,
-            options: { intents: [Constants.GatewayIntentBits.Guilds] },
+            options: { intents: [Constants.GatewayIntentBits.Guilds, Constants.GatewayIntentBits.GuildMessages] },
             commandContext: this,
+            commandMiddleware: async (interaction) => {
+                if (!interaction.guild) return;
+
+                let guild = await this.database.guild.get(interaction.guild?.id);
+                if (!guild) guild = await this.database.guild.create({ guildID: interaction.guild.id, guildName: interaction.guild.name });
+
+                if (guild.guildName !== interaction.guild.name) {
+                    await this.database.guild.update(interaction.guild.id, { guildName: interaction.guild.name });
+                }
+
+                return { guild };
+            },
         });
+        this.parsing = new Parsing(this);
         this.database = new Database(this);
     }
 

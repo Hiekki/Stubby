@@ -37,5 +37,7 @@ export default class GuildCreate extends EventBase {
                 },
             ],
         });
+
+        await caller.database.guild.delete(guild.id).catch(() => {});
     }
 }

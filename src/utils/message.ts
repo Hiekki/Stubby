@@ -13,11 +13,15 @@ export const StatusMessage = async (caller: Stubby, content: MessageContent) => 
     return await caller.bot.createMessage(caller.config.CHANNEL.STATUS, content);
 };
 
-export const SuccessMessage = async (command: CommandInteraction, content: string, ephemeral = false) => {
+export const SuccessMessage = async (
+    command: CommandInteraction | ModalSubmitInteraction | ComponentInteraction,
+    content: string,
+    ephemeral = false,
+) => {
     await command.createMessage({
         embeds: [
             {
-                title: 'Success' + BotEmojis.greenTick.full,
+                title: 'Success ' + BotEmojis.greenTick.full,
                 description: content,
                 color: BotColors.green,
             },
@@ -26,26 +30,34 @@ export const SuccessMessage = async (command: CommandInteraction, content: strin
     });
 };
 
-export const ErrorMessage = async (command: CommandInteraction, content: string, ephemeral = false) => {
+export const ErrorMessage = async (
+    command: CommandInteraction | ModalSubmitInteraction | ComponentInteraction,
+    content: string,
+    ephemeral = false,
+) => {
     await command.createMessage({
         embeds: [
             {
-                title: 'Error' + BotEmojis.redX.full,
+                title: 'Error ' + BotEmojis.redX.full,
                 description: content,
-                color: BotColors.orange,
+                color: BotColors.red,
             },
         ],
         flags: ephemeral ? Constants.MessageFlags.Ephemeral : undefined,
     });
 };
 
-export const MissingPermissionsMessage = async (command: CommandInteraction, missingPermissions: AllPermissions[], ephemeral = false) => {
+export const MissingPermissionsMessage = async (
+    command: CommandInteraction | ComponentInteraction,
+    missingPermissions: AllPermissions[],
+    ephemeral = false,
+) => {
     await command.createMessage({
         embeds: [
             {
                 title: 'Missing Permissions',
                 description: `The bot is missing the following permissions:`,
-                color: BotColors.orange,
+                color: BotColors.purple,
                 fields: missingPermissions.map((permission, index) => {
                     if (missingPermissions.length > 1) index = index + 1;
                     return {

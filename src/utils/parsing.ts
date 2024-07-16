@@ -1,14 +1,18 @@
-import { Command } from 'athena';
+import { Command, CommandInteraction } from 'athena';
 import Stubby from '../Bot';
 import moment, { Duration } from 'moment';
+import { ErrorMessage, MissingPermissionsMessage } from './message';
+import { AllPermissions } from '../types/Permissions';
 
 export default class Parsing {
     caller: Stubby;
+    bot: Stubby['bot'];
     config: Stubby['config'];
     logger: Stubby['logger'];
 
     constructor(caller: Stubby) {
         this.caller = caller;
+        this.bot = caller.bot;
         this.config = caller.config;
         this.logger = caller.logger;
     }
@@ -93,5 +97,20 @@ export default class Parsing {
         if (seconds && !hours) age += `${seconds}s`;
 
         return age.trim();
+    }
+
+    async botPermissionsCheck(command: CommandInteraction, permissions: AllPermissions[]) {
+        if (command.channel.isTextBased() && command.channel.inGuild()) {
+            const botPermissions = command.channel.permissionsOf(this.bot.user.id);
+            const missingPermissions = botPermissions.missing(...permissions);
+            if (missingPermissions.length) {
+                await MissingPermissionsMessage(command, missingPermissions as AllPermissions[], true);
+                return true;
+            }
+        } else {
+            await ErrorMessage(command, 'This command can only be used in a text channel.', true);
+            return true;
+        }
+        return false;
     }
 }

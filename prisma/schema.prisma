@@ -29,21 +29,39 @@ model Tickets {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  guild      Guild              @relation("GuildTickets", fields: [guildID], references: [guildID])
-  categories TicketCategories[] @relation("TicketCategories")
+  guild      Guild        @relation("GuildTickets", fields: [guildID], references: [guildID], onDelete: Cascade)
+  categories Categories[] @relation("Categories")
+  threads    Threads[]    @relation("Threads")
 }
 
-model TicketCategories {
-  id          Int      @id @default(autoincrement())
-  messageID   String
-  label       String
-  description String
-  role_one    String
-  role_two    String?
-  role_three  String?
-  emoji       String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Categories {
+  id             Int      @id @default(autoincrement())
+  messageID      String
+  label          String
+  description    String
+  role_one       String
+  role_two       String?
+  role_three     String?
+  emoji          String?
+  custom_message String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  ticket Tickets @relation("TicketCategories", fields: [messageID], references: [id])
+  ticket  Tickets   @relation("Categories", fields: [messageID], references: [id], onDelete: Cascade)
+  threads Threads[] @relation("CategoryThreads")
+}
+
+model Threads {
+  id         String   @id @unique
+  ticketID   String
+  userID     String
+  channelID  String
+  categoryID Int
+  closed     Boolean  @default(false)
+  locked     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  ticket   Tickets    @relation("Threads", fields: [ticketID], references: [id], onDelete: Cascade)
+  category Categories @relation("CategoryThreads", fields: [categoryID], references: [id], onDelete: Cascade)
 }

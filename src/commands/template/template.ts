@@ -7,6 +7,18 @@ export default class Template extends Command<Stubby> {
 
     async handleCommand(caller: Stubby, command: CommandInteraction) {
         try {
+            if (!command.guild) return;
+
+            const user = command.member ? command.member.user : command.user;
+            if (!user) return;
+
+            const permissions = await caller.parsing.botPermissionsCheck(command, [
+                'ManageThreads',
+                'CreatePrivateThreads',
+                'SendMessagesInThreads',
+            ]);
+            if (permissions) return;
+
             await command.createMessage({
                 content: 'Hello!',
             });

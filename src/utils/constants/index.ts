@@ -1,49 +1,38 @@
 import { AllPermissions } from '../../types/Permissions';
 
 export const BotColors = {
-    green: 7271027,
-    hydraGreen: 2275133,
+    embedGray: 2829617,
+    green: 5690368,
+    red: 16722730,
+    yellow: 16768341,
+    purple: 7361418,
     limeGreen: 2162432,
     orange: 15490071,
-    red: 16711680,
     white: 15987699,
     blurple: 7506394,
     aqua: 6217719,
     black: 0,
-    yellow: 16776960,
     blue: 4825087,
     darkGreen: 3372054,
     grey: 13421772,
     nitroPink: 16023551,
     sharkleberryFin: 16720194,
     zendeskBlue: 79419,
-    embedGray: 2829617,
+    hydraGreen: 2275133,
 };
 
 export const BotEmojis = {
-    online: {
-        full: '<:status_online:589592485517590532>',
-        partial: 'status_online:589592485517590532',
-    },
-    away: {
-        full: '<:status_away:589592485798346752>',
-        partial: 'status_away:589592485798346752',
-    },
-    dnd: {
-        full: '<:status_busy:58959248577318094>',
-        partial: 'status_busy:58959248577318094',
-    },
-    offline: {
-        full: '<:status_offline:589592485802541075>',
-        partial: 'status_offline:589592485802541075',
-    },
     greenTick: {
-        full: '<:green_tick:587201514532110347>',
-        partial: 'green_tick:587201514532110347',
+        full: '<:greenTick:1250204318595023011>',
+        partial: 'greenTick:1250204318595023011',
     },
     redX: {
-        full: '<:red_x:587201513865084928>',
-        partial: 'red_x:587201513865084928',
+        full: '<:redX:1250204319685414953>',
+        partial: 'redX:1250204319685414953',
+    },
+    yellowBang: {
+        full: '<:yellowBang:1250204320666746923>',
+        partial: 'yellowBang:1250204320666746923',
     },
 };
 
@@ -81,7 +70,7 @@ export const BotPermissions: Record<AllPermissions, { name: string; description:
     ManageRoles: {
         name: 'Manage Roles',
         description:
-            'Allows the bot to create new roles and edit or delete roles lower than it\'s highest role. Also allows the bot to change permissions of individual channels that they have access to.',
+            "Allows the bot to create new roles and edit or delete roles lower than it's highest role. Also allows the bot to change permissions of individual channels that they have access to.",
     },
     CreateGuildExpressions: {
         name: 'Create Guild Expressions',
@@ -108,7 +97,7 @@ export const BotPermissions: Record<AllPermissions, { name: string; description:
     ManageGuild: {
         name: 'Manage Guild',
         description:
-            'Allows the bot to change this server\'s name, switch regions, view all invites, add apps to this server, and create and update AutoMod rules.',
+            "Allows the bot to change this server's name, switch regions, view all invites, add apps to this server, and create and update AutoMod rules.",
     },
 
     //* Membership Permissions
@@ -118,7 +107,7 @@ export const BotPermissions: Record<AllPermissions, { name: string; description:
     },
     ChangeNickname: {
         name: 'Change Nickname',
-        description: 'Allows the bot to change it\'s own nickname for just this server.',
+        description: "Allows the bot to change it's own nickname for just this server.",
     },
     ManageNicknames: {
         name: 'Manage Nicknames',
@@ -232,7 +221,7 @@ export const BotPermissions: Record<AllPermissions, { name: string; description:
     },
     DeafenMembers: {
         name: 'Deafen Members',
-        description: 'Allows the bot to deafen other members in voice channels, which means they won\'t be able to hear others.',
+        description: "Allows the bot to deafen other members in voice channels, which means they won't be able to hear others.",
     },
     MoveMembers: {
         name: 'Move Members',
@@ -274,4 +263,3 @@ export const BotPermissions: Record<AllPermissions, { name: string; description:
             'With this permission, the bot will have every permission and will also bypass all channel specific permissions or restrictions.',
     },
 };
-

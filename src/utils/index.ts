@@ -54,4 +54,22 @@ export default class Utils {
         commands.forEach((command) => this.bot.deleteGuildCommand(guild, command.id));
         return;
     }
+
+    parseEmoji(emoji: string) {
+        const parsed = emoji.replace(/(<:)|(<)|(>)/g, '');
+        const string = parsed.split(':');
+        let animated = false;
+        let name = string[0];
+        let id = string[1];
+        if (string[0] === 'a') {
+            name = string[1];
+            id = string[2];
+            animated = true;
+        }
+        return {
+            name,
+            id,
+            animated,
+        };
+    }
 }
