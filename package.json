@@ -1,7 +1,7 @@
 {
-    "name": "bot",
-    "version": "0.0.1",
-    "description": "Bot by Team Hydra",
+    "name": "stubby",
+    "version": "1.0.0",
+    "description": "Bot by Hiekki",
     "main": "index.js",
     "scripts": {
         "start": "pm2 start config.json && pm2 logs",
@@ -12,7 +12,7 @@
         "setup": "npm i"
     },
     "keywords": [],
-    "author": "Team Hydra",
+    "author": "Hiekki",
     "license": "UNLICENSED",
     "private": true,
     "dependencies": {
