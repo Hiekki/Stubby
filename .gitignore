@@ -61,6 +61,7 @@ typings/
 .next
 
 config.json
+config-PROD.json
 
 *.csv
 

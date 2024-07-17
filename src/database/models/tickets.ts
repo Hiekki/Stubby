@@ -17,8 +17,12 @@ export default class Tickets {
         return this.db.tickets.findUnique({ where: { id }, include: { categories: true } });
     }
 
-    all(guildID: TicketsModel['guildID']) {
+    allGuild(guildID: TicketsModel['guildID']) {
         return this.db.tickets.findMany({ where: { guildID } });
+    }
+
+    all() {
+        return this.db.tickets.findMany();
     }
 
     update(id: TicketsModel['id'], data: Partial<Omit<TicketsModel, 'id' | UnchangeableFields>>) {

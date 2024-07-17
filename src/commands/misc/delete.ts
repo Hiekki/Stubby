@@ -2,6 +2,7 @@ import { AutocompleteInteraction, Command, CommandBuilder, CommandInteraction, C
 import Stubby from '../../Bot';
 import { ConfirmAction, ErrorMessage } from '../../utils/message';
 import { BotColors, BotEmojis } from '../../utils/constants';
+import moment from 'moment';
 
 export default class Delete extends Command<Stubby> {
     id = 'delete';
@@ -33,7 +34,7 @@ export default class Delete extends Command<Stubby> {
                 embeds: [
                     {
                         title: 'Delete Ticket',
-                        description: `Are you sure you want to delete the ticket \`${ticket.title}\`?`,
+                        description: `Are you sure you want to delete the ticket \`${ticket.title}\`?\n\n-# This command will timeout <t:${moment(Date.now()).add(1, 'minute').add(1, 'seconds').unix()}:R>`,
                         color: BotColors.purple,
                     },
                 ],
@@ -83,7 +84,7 @@ export default class Delete extends Command<Stubby> {
         if (!interaction.guild) return;
 
         const focusedValue = interaction.focused()?.value as string;
-        const tickets = await caller.database.tickets.all(interaction.guild.id);
+        const tickets = await caller.database.tickets.allGuild(interaction.guild.id);
         const results = tickets
             .filter((ticket) => ticket.title.toLowerCase().includes(focusedValue.toLowerCase()))
             .map((ticket) => {

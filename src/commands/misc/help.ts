@@ -8,8 +8,6 @@ export default class Help extends Command<Stubby> {
 
     async handleCommand(caller: Stubby, command: CommandInteraction) {
         try {
-            if (!command.guild) return;
-
             const pages: Constants.APIEmbed[] = [
                 {
                     title: 'Stubby Commands',

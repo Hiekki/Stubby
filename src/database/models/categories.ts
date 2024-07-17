@@ -17,8 +17,12 @@ export default class Categories {
         return this.db.categories.findUnique({ where: { id } });
     }
 
-    all(messageID: CategoriesModel['messageID']) {
+    allMessage(messageID: CategoriesModel['messageID']) {
         return this.db.categories.findMany({ where: { messageID } });
+    }
+
+    all() {
+        return this.db.categories.findMany();
     }
 
     update(id: CategoriesModel['id'], data: Partial<Omit<CategoriesModel, UnchangeableFields>>) {

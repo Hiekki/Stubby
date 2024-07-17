@@ -122,7 +122,7 @@ export default class Edit extends Command<Stubby> {
         if (!interaction.guild) return;
 
         const focusedValue = interaction.focused()?.value as string;
-        const tickets = await caller.database.tickets.all(interaction.guild.id);
+        const tickets = await caller.database.tickets.allGuild(interaction.guild.id);
         const results = tickets
             .filter((ticket) => ticket.title.toLowerCase().includes(focusedValue.toLowerCase()))
             .map((ticket) => {

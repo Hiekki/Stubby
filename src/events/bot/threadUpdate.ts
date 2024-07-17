@@ -24,7 +24,6 @@ export default class ThreadUpdate extends EventBase {
         } | null,
     ) {
         if (!this.enabled) return;
-        console.log(thread.threadMetadata?.archived);
         const dbThread = await caller.database.threads.get(thread.id);
         if (!dbThread) return;
 
@@ -32,7 +31,6 @@ export default class ThreadUpdate extends EventBase {
         else if (thread.threadMetadata?.locked) await caller.database.threads.update(thread.id, { closed: true, locked: true });
 
         if (!thread.threadMetadata?.archived && dbThread.closed) {
-            console.log('unlock');
             await caller.database.threads.update(thread.id, { closed: false, locked: false });
         }
     }

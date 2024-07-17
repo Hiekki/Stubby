@@ -2,6 +2,7 @@ import { Command, CommandBuilder, CommandInteraction, Constants } from 'athena';
 import Stubby from '../../Bot';
 import { BotColors, BotEmojis } from '../../utils/constants';
 import { ConfirmAction, ErrorMessage, SuccessMessage } from '../../utils/message';
+import moment from 'moment';
 
 export default class Developer extends Command<Stubby> {
     id = 'dev';
@@ -74,8 +75,8 @@ export default class Developer extends Command<Stubby> {
                             embeds: [
                                 {
                                     title: 'Nuke Guild Commands',
-                                    description: 'This will remove all guild commands from all guilds.\nAre you sure you want to continue?',
-                                    color: BotColors.blurple,
+                                    description: `This will remove all guild commands from all guilds.\nAre you sure you want to continue?\n\n-# This command will timeout <t:${moment(Date.now()).add(1, 'minute').add(1, 'seconds').unix()}:R>`,
+                                    color: BotColors.purple,
                                 },
                             ],
                             flags: Constants.MessageFlags.Ephemeral,
@@ -100,6 +101,12 @@ export default class Developer extends Command<Stubby> {
                     }
 
                     const confirmed = confirmation.result;
+
+                    if (confirmed) {
+                        caller.bot.guilds.forEach(async (guild) => {
+                            await guild.bulkEditCommands([]);
+                        });
+                    }
 
                     await command.editOriginalMessage({
                         embeds: [

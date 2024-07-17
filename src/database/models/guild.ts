@@ -17,6 +17,10 @@ export default class Guild {
         return this.db.guild.findUnique({ where: { guildID } });
     }
 
+    all() {
+        return this.db.guild.findMany();
+    }
+
     update(guildID: GuildModel['guildID'], data: Partial<Omit<GuildModel, UnchangeableFields>>) {
         return this.db.guild.update({ where: { guildID }, data });
     }

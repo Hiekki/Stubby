@@ -12,6 +12,7 @@ import {
 import Stubby from '../../Bot';
 import { BotColors, BotEmojis } from '../../utils/constants';
 import { ConfirmAction, ErrorMessage, MissingPermissionsMessage, SuccessMessage } from '../../utils/message';
+import moment from 'moment';
 
 type RolesCreate = [Role, Role | null, Role | null];
 type RolesEdit = [Role | null, Role | null, Role | null];
@@ -194,7 +195,7 @@ export default class Category extends Command<Stubby> {
                         embeds: [
                             {
                                 title: 'Delete Category',
-                                description: `Are you sure you want to delete the category \`${category.label}\`?`,
+                                description: `Are you sure you want to delete the category \`${category.label}\`?\n\n-# This command will timeout <t:${moment(Date.now()).add(1, 'minute').add(1, 'seconds').unix()}:R>`,
                                 color: BotColors.purple,
                             },
                         ],
@@ -237,7 +238,7 @@ export default class Category extends Command<Stubby> {
                 }
             }
 
-            const categories = await caller.database.categories.all(ticket.id);
+            const categories = await caller.database.categories.allMessage(ticket.id);
             if (categories.length) {
                 const components = new ComponentBuilder('category')
                     .addActionRow((row) => {
@@ -275,7 +276,7 @@ export default class Category extends Command<Stubby> {
         switch (focused?.name) {
             case 'ticket': {
                 const focusedValue = focused?.value as string;
-                const tickets = await caller.database.tickets.all(interaction.guild.id);
+                const tickets = await caller.database.tickets.allGuild(interaction.guild.id);
                 const results = tickets
                     .filter((ticket) => ticket.title.toLowerCase().includes(focusedValue.toLowerCase()))
                     .map((ticket) => {
@@ -290,7 +291,7 @@ export default class Category extends Command<Stubby> {
                 if (!ticketID) return await interaction.acknowledge([{ name: 'Please select a ticket first.', value: '0' }]);
 
                 const focusedValue = focused?.value as string;
-                const categories = await caller.database.categories.all(ticketID);
+                const categories = await caller.database.categories.allMessage(ticketID);
                 const results = categories
                     .filter((category) => category.label.toLowerCase().includes(focusedValue.toLowerCase()))
                     .map((category) => {
@@ -414,23 +415,77 @@ export default class Category extends Command<Stubby> {
                 const thread = await caller.database.threads.get(threadID);
                 if (!thread) return await interaction.deferUpdate();
 
-                if (thread.userID != user.id && !mod) return await interaction.deferUpdate();
-
-                try {
-                    await SuccessMessage(interaction, `Ticket will be closed in 5 seconds.`);
-
-                    setTimeout(async () => {
-                        if (channel.isThread()) {
-                            await channel.edit({
-                                archived: true,
-                                locked: options == 'lock',
-                            });
-                        }
-                    }, 5 * 1000);
-                } catch (error) {
-                    caller.logger.error(error);
-                    return await ErrorMessage(interaction, 'Failed to lock ticket!', true);
+                if (thread.userID != user.id && !mod) {
+                    return await interaction.createMessage({
+                        content: user.mention,
+                        embeds: [
+                            {
+                                description: 'You do not have permission to close this ticket.',
+                                color: BotColors.embedGray,
+                            },
+                        ],
+                        flags: Constants.MessageFlags.Ephemeral,
+                    });
                 }
+
+                const isLock = options == 'lock';
+
+                const confirmMessage = await ConfirmAction(caller, interaction, {
+                    embeds: [
+                        {
+                            title: isLock ? 'Lock Thread' : 'Close Thread',
+                            description: `Are you sure you want to ${isLock ? 'lock' : 'close'} this thread?\n\n-# This command will timeout <t:${moment(Date.now()).add(1, 'minute').add(1, 'seconds').unix()}:R>`,
+                            color: BotColors.purple,
+                        },
+                    ],
+                    flags: Constants.MessageFlags.Ephemeral,
+                });
+
+                if (confirmMessage.timeout) {
+                    return await interaction.editOriginalMessage({
+                        embeds: [
+                            {
+                                title: `${isLock ? 'Lock Thread' : 'Close Thread'}: Timed Out ${BotEmojis.yellowBang.full}`,
+                                description: 'You took too long to decide!',
+                                color: BotColors.yellow,
+                            },
+                        ],
+                        components: [],
+                    });
+                }
+
+                const confirmed = confirmMessage.result;
+
+                if (confirmed) {
+                    try {
+                        await interaction.deleteOriginalMessage().catch(() => {});
+                        await SuccessMessage(interaction, `Ticket will be ${isLock ? 'locked' : 'closed'} in 5 seconds.`);
+
+                        setTimeout(async () => {
+                            if (channel.isThread()) {
+                                await channel.edit({
+                                    archived: true,
+                                    locked: options == 'lock',
+                                });
+                            }
+                        }, 5 * 1000);
+                    } catch (error) {
+                        caller.logger.error(error);
+                        return await ErrorMessage(interaction, `Failed to ${isLock ? 'lock' : 'close'} ticket!`, true);
+                    }
+                } else {
+                    return await interaction.editOriginalMessage({
+                        embeds: [
+                            {
+                                title: `${isLock ? 'Lock Thread' : 'Close Thread'}: Cancelled ${BotEmojis.redX.full}`,
+                                description: `The request to ${isLock ? 'lock' : 'close'} the thread has been cancelled.`,
+                                color: BotColors.red,
+                            },
+                        ],
+                        components: [],
+                    });
+                }
+
                 break;
             }
             default: {

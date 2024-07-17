@@ -21,6 +21,10 @@ export default class Threads {
         return this.db.threads.findMany({ where: { channelID, closed: false } });
     }
 
+    all() {
+        return this.db.threads.findMany();
+    }
+
     update(id: ThreadsModel['id'], data: Pick<ThreadsModel, 'closed' | 'locked'>) {
         return this.db.threads.update({ where: { id }, data });
     }
