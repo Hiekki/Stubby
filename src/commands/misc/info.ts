@@ -17,8 +17,8 @@ export default class Info extends Command<Stubby> {
                         color: BotColors.purple,
                         fields: [
                             {
-                                name: 'Library',
-                                value: `Athena v${VERSION}`,
+                                name: 'Athena',
+                                value: `v${VERSION}`,
                                 inline: true,
                             },
                             {
@@ -27,8 +27,8 @@ export default class Info extends Command<Stubby> {
                                 inline: true,
                             },
                             {
-                                name: 'Bot Version',
-                                value: process.env.npm_package_version ?? 'N/A',
+                                name: 'Bot',
+                                value: process.env.npm_package_version ? `v${process.env.npm_package_version}` : 'N/A',
                                 inline: true,
                             },
                             {
@@ -72,6 +72,9 @@ export default class Info extends Command<Stubby> {
                                 value: 'Hiekki, Fire',
                             },
                         ],
+                        footer: {
+                            text: `Uptime: ${caller.parsing.accountAge(Date.now() - process.uptime() * 1000)}`,
+                        },
                     },
                 ],
                 flags: Constants.MessageFlags.Ephemeral,
