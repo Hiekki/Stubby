@@ -33,33 +33,33 @@ export default class Info extends Command<Stubby> {
                             },
                             {
                                 name: 'Guilds',
-                                value: `${caller.bot.guilds.size}`,
+                                value: numeral(caller.bot.guilds.size).format('0,0'),
                                 inline: true,
                             },
                             {
                                 name: 'DB Guilds',
-                                value: `${(await caller.database.guild.all()).length}`,
+                                value: numeral((await caller.database.guild.all()).length).format('0,0'),
                                 inline: true,
                             },
                             {
                                 name: 'Users',
                                 //@ts-ignore --It works
-                                value: `${numeral(caller.bot.guilds.reduce((a, v) => a + v.memberCount, 0)).format('0,0')}`,
+                                value: numeral(caller.bot.guilds.reduce((a, v) => a + v.memberCount, 0)).format('0,0'),
                                 inline: true,
                             },
                             {
-                                name: 'Ticket Systems',
-                                value: `${(await caller.database.tickets.all()).length}`,
+                                name: 'Tickets',
+                                value: numeral((await caller.database.tickets.all()).length).format('0,0'),
                                 inline: true,
                             },
                             {
                                 name: 'Categories',
-                                value: `${(await caller.database.categories.all()).length}`,
+                                value: numeral((await caller.database.categories.all()).length).format('0,0'),
                                 inline: true,
                             },
                             {
                                 name: 'Threads',
-                                value: `${(await caller.database.threads.all()).length}`,
+                                value: numeral((await caller.database.threads.all()).length).format('0,0'),
                                 inline: true,
                             },
                             {
@@ -69,7 +69,7 @@ export default class Info extends Command<Stubby> {
                             },
                             {
                                 name: 'Made By:',
-                                value: 'Hiekki\nFire',
+                                value: 'Hiekki, Fire',
                             },
                         ],
                     },
