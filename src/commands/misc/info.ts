@@ -48,7 +48,7 @@ export default class Info extends Command<Stubby> {
                                 inline: true,
                             },
                             {
-                                name: 'Tickets',
+                                name: 'Systems',
                                 value: numeral((await caller.database.tickets.all()).length).format('0,0'),
                                 inline: true,
                             },
@@ -58,7 +58,7 @@ export default class Info extends Command<Stubby> {
                                 inline: true,
                             },
                             {
-                                name: 'Threads',
+                                name: 'Tickets',
                                 value: numeral((await caller.database.threads.all()).length).format('0,0'),
                                 inline: true,
                             },
