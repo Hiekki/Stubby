@@ -24,14 +24,15 @@ export default class ThreadUpdate extends EventBase {
         } | null,
     ) {
         if (!this.enabled) return;
+
         const dbThread = await caller.database.threads.get(thread.id);
         if (!dbThread) return;
 
-        if (thread.threadMetadata?.archived) await caller.database.threads.update(thread.id, { closed: true, locked: false });
-        else if (thread.threadMetadata?.locked) await caller.database.threads.update(thread.id, { closed: true, locked: true });
-
-        if (!thread.threadMetadata?.archived && dbThread.closed) {
-            await caller.database.threads.update(thread.id, { closed: false, locked: false });
+        if (thread.threadMetadata) {
+            await caller.database.threads.update(thread.id, {
+                closed: thread.threadMetadata.archived,
+                locked: thread.threadMetadata.locked ?? dbThread.locked,
+            });
         }
     }
 }
