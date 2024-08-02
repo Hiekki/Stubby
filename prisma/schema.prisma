@@ -11,11 +11,12 @@ datasource db {
 }
 
 model Guild {
-  id        Int      @id @default(autoincrement())
-  guildID   String   @unique
-  guildName String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  guildID     String   @unique
+  guildName   String
+  logsChannel String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   tickets Tickets[] @relation("GuildTickets")
 }
@@ -43,7 +44,7 @@ model Categories {
   role_two       String?
   role_three     String?
   emoji          String?
-  custom_message String?
+  custom_message String?  @db.Text
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
