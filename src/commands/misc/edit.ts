@@ -9,6 +9,7 @@ import {
 } from 'athena';
 import Stubby from '../../Bot';
 import { ErrorMessage, SuccessMessage } from '../../utils/message';
+import MiddleWareType from '../../types/MiddleWare';
 
 export default class Edit extends Command<Stubby> {
     id = 'edit';
@@ -65,7 +66,7 @@ export default class Edit extends Command<Stubby> {
         }
     }
 
-    async handleModal(caller: Stubby, interaction: ModalSubmitInteraction) {
+    async handleModal(caller: Stubby, interaction: ModalSubmitInteraction, middleware: MiddleWareType) {
         if (!interaction.guild) return;
         const user = interaction.member ? interaction.member.user : interaction.user;
         if (!user) return;
@@ -101,6 +102,12 @@ export default class Edit extends Command<Stubby> {
             fast_copy.timestamp = new Date().toISOString();
 
             await caller.bot.editMessage(ticket.channelID, ticket.id, { embeds: [fast_copy] });
+
+            if (middleware?.guild.logsChannel) {
+                await caller.bot.createMessage(middleware.guild.logsChannel, {
+                    content: `[<t:${caller.parsing.unix()}:f>] ✏️ ${user.mention} (\`${user.id}\`) edited a ticket system in <#${ticket.channelID}>: **${title}**\n**Old Title:** ${ticket.title}\n**New Title:** ${title}\n**Old Description:** \`\`\`${ticket.description}\`\`\`**New Description:** \`\`\`${description}\`\`\``,
+                });
+            }
 
             await caller.database.tickets.update(ticketID, {
                 title,

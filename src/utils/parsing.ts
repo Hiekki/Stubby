@@ -40,6 +40,10 @@ export default class Parsing {
         return content;
     }
 
+    unix() {
+        return Math.floor(Date.now() / 1000);
+    }
+
     parseTime(t: string) {
         let d = new Date();
         let time = t.match(/(\d+)(?::(\d\d))?\s*(p?)/);

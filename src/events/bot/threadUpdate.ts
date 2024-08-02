@@ -25,6 +25,9 @@ export default class ThreadUpdate extends EventBase {
     ) {
         if (!this.enabled) return;
 
+        const guild = await caller.database.guild.get(thread.guild.id);
+        if (!guild) return;
+
         const dbThread = await caller.database.threads.get(thread.id);
         if (!dbThread) return;
 
@@ -33,6 +36,22 @@ export default class ThreadUpdate extends EventBase {
                 closed: thread.threadMetadata.archived,
                 locked: thread.threadMetadata.locked ?? dbThread.locked,
             });
+
+            if (guild.logsChannel) {
+                if (thread.threadMetadata.locked != old?.threadMetadata?.locked) {
+                    await caller.bot.createMessage(guild.logsChannel, {
+                        content: `[<t:${caller.parsing.unix()}:f>] ${thread.threadMetadata.locked ? '🔒' : '🔓'} A ticket was ${
+                            thread.threadMetadata.locked ? 'locked' : 'unlocked'
+                        }: **${thread.name}**`,
+                    });
+                } else if (thread.threadMetadata.archived != old?.threadMetadata?.archived) {
+                    await caller.bot.createMessage(guild.logsChannel, {
+                        content: `[<t:${caller.parsing.unix()}:f>] ${thread.threadMetadata.archived ? '📨' : '📫'} A ticket was ${
+                            thread.threadMetadata.archived ? 'closed' : 're-opened'
+                        }: **${thread.name}**`,
+                    });
+                }
+            }
         }
     }
 }

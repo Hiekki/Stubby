@@ -3,6 +3,7 @@ import Stubby from '../../Bot';
 import { ConfirmAction, ErrorMessage } from '../../utils/message';
 import { BotColors, BotEmojis } from '../../utils/constants';
 import moment from 'moment';
+import MiddleWareType from '../../types/MiddleWare';
 
 export default class Delete extends Command<Stubby> {
     id = 'delete';
@@ -12,7 +13,7 @@ export default class Delete extends Command<Stubby> {
         .setContexts([Constants.InteractionContextType.Guild])
         .addStringOption({ name: 'ticket', description: 'The ticket to delete', required: true, autocomplete: true });
 
-    async handleCommand(caller: Stubby, command: CommandInteraction) {
+    async handleCommand(caller: Stubby, command: CommandInteraction, middleware: MiddleWareType) {
         try {
             if (!command.guild) return;
 
@@ -59,7 +60,11 @@ export default class Delete extends Command<Stubby> {
             if (confirmed) {
                 try {
                     await caller.bot.deleteMessage(ticket.channelID, ticket.id);
-                    await caller.database.tickets.delete(ticketID);
+                    if (middleware?.guild.logsChannel) {
+                        await caller.bot.createMessage(middleware.guild.logsChannel, {
+                            content: `[<t:${caller.parsing.unix()}:f>] 🗑️ ${user.mention} (\`${user.id}\`) deleted a ticket system in <#${ticket.channelID}>: **${ticket.title}**`,
+                        });
+                    }
                 } catch (error) {
                     caller.logger.error(error);
                     return await ErrorMessage(command, 'Failed to delete ticket!', true);
@@ -74,6 +79,7 @@ export default class Delete extends Command<Stubby> {
                         color: confirmed ? BotColors.green : BotColors.red,
                     },
                 ],
+                components: [],
             });
         } catch (error) {
             caller.parsing.commandError(error);

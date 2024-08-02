@@ -3,6 +3,7 @@ import Stubby from '../../Bot';
 import { BotColors } from '../../utils/constants';
 import { ErrorMessage, MissingPermissionsMessage, SuccessMessage } from '../../utils/message';
 import { AllPermissions } from '../../types/Permissions';
+import MiddleWareType from '../../types/MiddleWare';
 
 export default class Create extends Command<Stubby> {
     id = 'create';
@@ -59,7 +60,7 @@ export default class Create extends Command<Stubby> {
         }
     }
 
-    async handleModal(caller: Stubby, interaction: ModalSubmitInteraction) {
+    async handleModal(caller: Stubby, interaction: ModalSubmitInteraction, middleware: MiddleWareType) {
         if (!interaction.guild) return;
         const user = interaction.member ? interaction.member.user : interaction.user;
         if (!user) return;
@@ -94,13 +95,19 @@ export default class Create extends Command<Stubby> {
                 ],
             });
 
-            await caller.database.tickets.create({
+            const ticket = await caller.database.tickets.create({
                 id: message.id,
                 guildID: interaction.guild.id,
                 channelID: channelID,
                 title,
                 description,
             });
+
+            if (middleware?.guild.logsChannel) {
+                await caller.bot.createMessage(middleware.guild.logsChannel, {
+                    content: `[<t:${caller.parsing.unix()}:f>] 🖊️ ${user.mention} (\`${user.id}\`) created a new ticket system in <#${ticket.channelID}>: **${ticket.title}**`,
+                });
+            }
         } catch (error) {
             caller.logger.error(error);
             return await ErrorMessage(interaction, 'Failed to create ticket!', true);

@@ -13,6 +13,7 @@ import Stubby from '../../Bot';
 import { BotColors, BotEmojis } from '../../utils/constants';
 import { ConfirmAction, ErrorMessage, MissingPermissionsMessage, SuccessMessage } from '../../utils/message';
 import moment from 'moment';
+import MiddleWareType from '../../types/MiddleWare';
 
 type RolesCreate = [Role, Role | null, Role | null];
 type RolesEdit = [Role | null, Role | null, Role | null];
@@ -49,6 +50,7 @@ export default class Category extends Command<Stubby> {
                 .addStringOption({
                     name: 'custom_message',
                     description: 'What message would you like for the user to see when they join?',
+                    max_length: 4000,
                 });
         })
         .addSubcommand('edit', 'Edit a category', (sub) => {
@@ -81,6 +83,7 @@ export default class Category extends Command<Stubby> {
                 .addStringOption({
                     name: 'custom_message',
                     description: 'What message would you like for the user to see when they join?',
+                    max_length: 4000,
                 });
         })
         .addSubcommand('delete', 'Delete a category', (sub) => {
@@ -97,7 +100,7 @@ export default class Category extends Command<Stubby> {
             });
         });
 
-    async handleCommand(caller: Stubby, command: CommandInteraction) {
+    async handleCommand(caller: Stubby, command: CommandInteraction, middleware: MiddleWareType) {
         try {
             if (!command.guild) return;
 
@@ -158,7 +161,11 @@ export default class Category extends Command<Stubby> {
                         custom_message,
                     });
 
-                    //TODO: Send log
+                    if (middleware?.guild.logsChannel) {
+                        await caller.bot.createMessage(middleware.guild.logsChannel, {
+                            content: `[<t:${caller.parsing.unix()}:f>] 🖊️ ${user.mention} (\`${user.id}\`) created a new category in **${ticket.title}**: **${label}**`,
+                        });
+                    }
                     break;
                 }
                 case 'edit': {
@@ -185,7 +192,11 @@ export default class Category extends Command<Stubby> {
                         custom_message: custom_message ?? category.custom_message,
                     });
 
-                    //TODO: Send log
+                    if (middleware?.guild.logsChannel) {
+                        await caller.bot.createMessage(middleware.guild.logsChannel, {
+                            content: `[<t:${caller.parsing.unix()}:f>] ✏️ ${user.mention} (\`${user.id}\`) edited a category in **${ticket.title}**: **${label}**`,
+                        });
+                    }
                     break;
                 }
                 case 'delete': {
@@ -221,9 +232,13 @@ export default class Category extends Command<Stubby> {
 
                     if (confirmed) {
                         try {
-                            await caller.database.categories.delete(categoryID);
+                            if (middleware?.guild.logsChannel) {
+                                await caller.bot.createMessage(middleware.guild.logsChannel, {
+                                    content: `[<t:${caller.parsing.unix()}:f>] 🗑️ ${user.mention} (\`${user.id}\`) deleted a category in **${ticket.title}**: **${category.label}**`,
+                                });
+                            }
 
-                            //TODO: Send log
+                            await caller.database.categories.delete(categoryID);
                         } catch (error) {
                             caller.logger.error(error);
                             return await ErrorMessage(command, 'Failed to delete category!', true);
@@ -309,7 +324,7 @@ export default class Category extends Command<Stubby> {
         }
     }
 
-    async handleComponent(caller: Stubby, interaction: ComponentInteraction) {
+    async handleComponent(caller: Stubby, interaction: ComponentInteraction, middleware: MiddleWareType) {
         if (!interaction.guild) return;
 
         const user = interaction.member ? interaction.member.user : interaction.user;
@@ -357,7 +372,11 @@ export default class Category extends Command<Stubby> {
                     channelID: interaction.channel.id,
                 });
 
-                //TODO: Send log
+                if (middleware?.guild.logsChannel) {
+                    await caller.bot.createMessage(middleware.guild.logsChannel, {
+                        content: `[<t:${caller.parsing.unix()}:f>] 🖊️ ${user.mention} (\`${user.id}\`) opened a new ticket in <#${interaction.channel.id}>: **${category.label}**`,
+                    });
+                }
 
                 await thread.createMessage({
                     content: `${roles.map((role) => `<@&${role}>`).join(' ')} | ${user.mention} | ${user.id}`,

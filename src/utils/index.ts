@@ -4,9 +4,11 @@ import moment from 'moment-timezone';
 export default class Utils {
     bot: Stubby['bot'];
     config: Stubby['config'];
+    database: Stubby['database'];
     constructor(caller: Stubby) {
         this.bot = caller.bot;
         this.config = caller.config;
+        this.database = caller.database;
     }
 
     getTime(timezone = 'UTC', timestamp = new Date()) {
