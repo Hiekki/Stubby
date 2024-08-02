@@ -158,6 +158,7 @@ export default class Category extends Command<Stubby> {
                         custom_message,
                     });
 
+                    //TODO: Send log
                     break;
                 }
                 case 'edit': {
@@ -184,6 +185,7 @@ export default class Category extends Command<Stubby> {
                         custom_message: custom_message ?? category.custom_message,
                     });
 
+                    //TODO: Send log
                     break;
                 }
                 case 'delete': {
@@ -220,6 +222,8 @@ export default class Category extends Command<Stubby> {
                     if (confirmed) {
                         try {
                             await caller.database.categories.delete(categoryID);
+
+                            //TODO: Send log
                         } catch (error) {
                             caller.logger.error(error);
                             return await ErrorMessage(command, 'Failed to delete category!', true);
@@ -345,13 +349,15 @@ export default class Category extends Command<Stubby> {
                     auto_archive_duration: 10080,
                 })) as ThreadChannel;
 
-                await caller.database.threads.create({
+                const ticket = await caller.database.threads.create({
                     id: thread.id,
                     userID: user.id,
                     categoryID: categoryID,
                     ticketID: category.messageID,
                     channelID: interaction.channel.id,
                 });
+
+                //TODO: Send log
 
                 await thread.createMessage({
                     content: `${roles.map((role) => `<@&${role}>`).join(' ')} | ${user.mention} | ${user.id}`,
@@ -363,7 +369,7 @@ export default class Category extends Command<Stubby> {
                         {
                             title: `Topic: ${category.label}`,
                             description:
-                                category.custom_message ??
+                                category.custom_message?.replace(/\\n/g, '\n') ??
                                 'Thank you for reaching out to us. Feel free to go ahead and ask any questions you may have regarding this topic. Someone will be with you shortly.',
                             color: BotColors.embedGray,
                             thumbnail: {
