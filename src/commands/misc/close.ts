@@ -43,6 +43,7 @@ export default class Close extends Command<Stubby> {
                     }
 
                     setTimeout(async () => {
+                        await caller.database.threads.delete(channel.id);
                         await caller.bot.deleteChannel(channel.id);
                     }, 5 * 1000);
                 } catch (error) {
@@ -60,10 +61,8 @@ export default class Close extends Command<Stubby> {
                     }
 
                     setTimeout(async () => {
-                        await channel.edit({
-                            archived: true,
-                            locked: isLock ?? false,
-                        });
+                        await caller.database.threads.update(channel.id, { closed: true, locked: isLock ?? false });
+                        await channel.edit({ archived: true, locked: isLock ?? false });
                     }, 5 * 1000);
                 } catch (error) {
                     caller.logger.error(error);

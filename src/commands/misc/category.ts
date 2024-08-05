@@ -523,6 +523,10 @@ export default class Category extends Command<Stubby> {
                         setTimeout(async () => {
                             if (channel.isThread()) {
                                 options == 'delete'
+                                    ? await caller.database.threads.delete(threadID)
+                                    : await caller.database.threads.update(threadID, { closed: true, locked: options == 'lock' });
+
+                                options == 'delete'
                                     ? await channel.delete().catch(() => {})
                                     : await channel.edit({ archived: true, locked: options == 'lock' });
                             }
