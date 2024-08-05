@@ -38,17 +38,13 @@ export default class ThreadUpdate extends EventBase {
             });
 
             if (guild.logsChannel) {
-                if (thread.threadMetadata.locked != old?.threadMetadata?.locked) {
+                if (!thread.threadMetadata.locked && thread.threadMetadata.locked != old?.threadMetadata?.locked) {
                     await caller.bot.createMessage(guild.logsChannel, {
-                        content: `[<t:${caller.parsing.unix()}:f>] ${thread.threadMetadata.locked ? '🔒' : '🔓'} A ticket was ${
-                            thread.threadMetadata.locked ? 'locked' : 'unlocked'
-                        }: **${thread.name}**`,
+                        content: `[<t:${caller.parsing.unix()}:f>] 🔓 A ticket was 'unlocked': **${thread.name}**`,
                     });
-                } else if (thread.threadMetadata.archived != old?.threadMetadata?.archived) {
+                } else if (!thread.threadMetadata.archived && thread.threadMetadata.archived != old?.threadMetadata?.archived) {
                     await caller.bot.createMessage(guild.logsChannel, {
-                        content: `[<t:${caller.parsing.unix()}:f>] ${thread.threadMetadata.archived ? '📨' : '📫'} A ticket was ${
-                            thread.threadMetadata.archived ? 'closed' : 're-opened'
-                        }: **${thread.name}**`,
+                        content: `[<t:${caller.parsing.unix()}:f>] 📬 A ticket was re-opened: **${thread.name}**`,
                     });
                 }
             }

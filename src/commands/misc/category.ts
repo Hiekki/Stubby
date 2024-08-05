@@ -327,7 +327,7 @@ export default class Category extends Command<Stubby> {
     async handleComponent(caller: Stubby, interaction: ComponentInteraction, middleware: MiddleWareType) {
         if (!interaction.guild) return;
 
-        const user = interaction.member ? interaction.member.user : interaction.user;
+        const user = interaction.member;
         if (!user) return;
 
         switch (interaction.data.component_type) {
@@ -335,7 +335,8 @@ export default class Category extends Command<Stubby> {
                 const categoryID = Number(interaction.data.values[0]);
                 const category = await caller.database.categories.get(categoryID);
                 if (!category) return;
-                const title = `${user.displayName(true)} | ${category.label}`;
+
+                const title = `${user.nick ?? user.displayName(true)} | ${category.label}`;
 
                 const activeThreads = await caller.database.threads.allOpen(interaction.channel.id);
                 const openUserThreads = activeThreads.filter((thread) => thread.categoryID == categoryID && thread.userID == user.id);
@@ -364,7 +365,7 @@ export default class Category extends Command<Stubby> {
                     auto_archive_duration: 10080,
                 })) as ThreadChannel;
 
-                const ticket = await caller.database.threads.create({
+                await caller.database.threads.create({
                     id: thread.id,
                     userID: user.id,
                     categoryID: categoryID,
@@ -407,7 +408,7 @@ export default class Category extends Command<Stubby> {
                                 label: 'Close',
                                 custom_id: `close:${thread.id}`,
                                 style: Constants.ButtonStyle.Primary,
-                                emoji: '📨',
+                                emoji: '📫',
                             })
                                 .addNormalButton({
                                     label: 'Lock',
@@ -447,7 +448,7 @@ export default class Category extends Command<Stubby> {
                 const thread = await caller.database.threads.get(threadID);
                 if (!thread) return await interaction.deferUpdate();
 
-                if (thread.userID != user.id && !mod) {
+                if (!mod) {
                     return await interaction.createMessage({
                         content: user.mention,
                         embeds: [
@@ -495,6 +496,29 @@ export default class Category extends Command<Stubby> {
                             interaction,
                             `This ticket will be ${chosenOption == 'lock' ? 'locked' : chosenOption == 'close' ? 'closed' : 'deleted'} in 5 seconds.`,
                         );
+
+                        if (middleware?.guild.logsChannel) {
+                            switch (chosenOption) {
+                                case 'lock':
+                                    await caller.bot.createMessage(middleware.guild.logsChannel, {
+                                        //@ts-ignore
+                                        content: `[<t:${caller.parsing.unix()}:f>] 🔒 ${user.mention} (\`${user.id}\`) locked a ticket: **${channel.name}**`,
+                                    });
+                                    break;
+                                case 'close':
+                                    await caller.bot.createMessage(middleware.guild.logsChannel, {
+                                        //@ts-ignore
+                                        content: `[<t:${caller.parsing.unix()}:f>] 📫 ${user.mention} (\`${user.id}\`) closed a ticket: **${channel.name}**`,
+                                    });
+                                    break;
+                                case 'delete':
+                                    await caller.bot.createMessage(middleware.guild.logsChannel, {
+                                        //@ts-ignore
+                                        content: `[<t:${caller.parsing.unix()}:f>] 🗑️ ${user.mention} (\`${user.id}\`) deleted a ticket: **${channel.name}**`,
+                                    });
+                                    break;
+                            }
+                        }
 
                         setTimeout(async () => {
                             if (channel.isThread()) {

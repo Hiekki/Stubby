@@ -1,6 +1,7 @@
 import { Command, CommandBuilder, CommandInteraction, Constants } from 'athena';
 import Stubby from '../../Bot';
 import { ErrorMessage, SuccessMessage } from '../../utils/message';
+import MiddleWareType from '../../types/MiddleWare';
 
 export default class Close extends Command<Stubby> {
     id = 'close';
@@ -11,7 +12,7 @@ export default class Close extends Command<Stubby> {
         .addBooleanOption('delete', 'Delete the ticket permanently')
         .addBooleanOption('lock', 'Lock the ticket so that it cannot be talked in anymore');
 
-    async handleCommand(caller: Stubby, command: CommandInteraction) {
+    async handleCommand(caller: Stubby, command: CommandInteraction, middleware: MiddleWareType) {
         try {
             if (!command.guild) return;
 
@@ -35,6 +36,12 @@ export default class Close extends Command<Stubby> {
                 try {
                     await SuccessMessage(command, `Ticket will be deleted in 5 seconds.`);
 
+                    if (middleware?.guild.logsChannel) {
+                        await caller.bot.createMessage(middleware.guild.logsChannel, {
+                            content: `[<t:${caller.parsing.unix()}:f>] 🗑️ ${user.mention} (\`${user.id}\`) deleted a ticket: **${channel.name}**`,
+                        });
+                    }
+
                     setTimeout(async () => {
                         await caller.bot.deleteChannel(channel.id);
                     }, 5 * 1000);
@@ -44,7 +51,13 @@ export default class Close extends Command<Stubby> {
                 }
             } else {
                 try {
-                    await SuccessMessage(command, `Ticket will be closed in 5 seconds.`);
+                    await SuccessMessage(command, `Ticket will be ${isLock ? 'locked' : 'closed'} in 5 seconds.`);
+
+                    if (middleware?.guild.logsChannel) {
+                        await caller.bot.createMessage(middleware.guild.logsChannel, {
+                            content: `[<t:${caller.parsing.unix()}:f>] ${isLock ? '🔒' : '📫'} ${user.mention} (\`${user.id}\`) ${isLock ? 'locked' : 'closed'} a ticket: **${channel.name}**`,
+                        });
+                    }
 
                     setTimeout(async () => {
                         await channel.edit({
@@ -54,7 +67,7 @@ export default class Close extends Command<Stubby> {
                     }, 5 * 1000);
                 } catch (error) {
                     caller.logger.error(error);
-                    return await ErrorMessage(command, 'Failed to lock ticket!', true);
+                    return await ErrorMessage(command, `Failed to ${isLock ? 'lock' : 'close'} ticket!`, true);
                 }
             }
         } catch (error) {
