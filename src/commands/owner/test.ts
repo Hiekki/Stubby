@@ -1,7 +1,5 @@
 import Stubby from '../../Bot';
-import { BotColors, BotEmojis } from '../../utils/constants/index';
 import { Command, CommandBuilder, CommandInteraction, Constants } from 'athena';
-import { ConfirmAction, Pagination } from '../../utils/message';
 
 export default class Test extends Command<Stubby> {
     id = 'test';

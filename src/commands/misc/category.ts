@@ -11,7 +11,7 @@ import {
 } from 'athena';
 import Stubby from '../../Bot';
 import { BotColors, BotEmojis } from '../../utils/constants';
-import { ConfirmAction, ErrorMessage, MissingPermissionsMessage, SuccessMessage } from '../../utils/message';
+import { ConfirmAction, ErrorMessage, SuccessMessage } from '../../utils/message';
 import moment from 'moment';
 import MiddleWareType from '../../types/MiddleWare';
 
