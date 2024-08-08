@@ -6,7 +6,7 @@
     "scripts": {
         "start": "pm2 start config.json && pm2 logs",
         "restart": "pm2 restart config.json && pm2 logs",
-        "dev": "nodemon -I --exec npx ts-node ./src/Bot.ts",
+        "dev": "bun run --watch src/Bot.ts",
         "build": "shx rm -rf dist && tsc",
         "format": "prettier --write \"**/*.ts\"",
         "setup": "npm i",

@@ -31,17 +31,15 @@ export default class List extends Command<Stubby> {
             const pages: Constants.APIEmbed[] = list.map((ticket) => {
                 return {
                     title: ticket.title,
-                    description: `**Ticket ID:** ${ticket.id}\n**Channel:** <#${ticket.channelID}>\n**Description:** ${ticket.description.substring(0, 30) + '...'}\n**Created:** <t:${moment(ticket.createdAt).unix()}>\n**Updated:** <t:${moment(ticket.updatedAt).unix()}>\n\n**Jump to Ticket:** https://discord.com/channels/${ticket.guildID}/${ticket.channelID}/${ticket.id}`,
+                    description: `**Ticket ID:** ${ticket.id}\n**Channel:** <#${ticket.channelID}>\n**Description:** ${ticket.description.length > 30 ? `${ticket.description.substring(0, 27)}...` : ticket.description}\n**Created:** <t:${moment(ticket.createdAt).unix()}>\n**Updated:** <t:${moment(ticket.updatedAt).unix()}>\n\n[**Jump to Ticket**](https://discord.com/channels/${ticket.guildID}/${ticket.channelID}/${ticket.id})`,
                     color: BotColors.purple,
                     thumbnail: {
                         url: command.guild?.iconURL ?? '',
                     },
-                    fields: ticket.categories.map((category) => {
-                        return {
-                            name: `__${category.label}__`,
-                            value: `>>> **Description:** ${category.description}\n**Role One:** <@&${category.role_one}>${category.role_two ? '\n**Role Two:** <@&' + category.role_two + '>' : ''}${category.role_three ? '\n**Role Three:** <@&' + category.role_three + '>' : ''}${category.emoji ? '\n**Emoji:** ' + category.emoji : ''}${category.custom_message ? '\n**Custom Message:** ' + category.custom_message : ''}`,
-                        };
-                    }),
+                    fields: ticket.categories.map((category) => ({
+                        name: `__${category.label}__`,
+                        value: `>>> **Description:** ${category.description}\n**Role One:** <@&${category.role_one}>${category.role_two ? `\n**Role Two:** <@&${category.role_two}>` : ''}${category.role_three ? `\n**Role Three:** <@&${category.role_three}>` : ''}${category.emoji ? `\n**Emoji:** ${category.emoji}` : ''}${category.custom_message ? `\n**Custom Message:** ${category.custom_message}` : ''}`,
+                    })),
                     footer: {
                         text: `${caller.bot.user?.username} • Tickets`,
                         icon_url: caller.bot.user?.dynamicAvatarURL(),
