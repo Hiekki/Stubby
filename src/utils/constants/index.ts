@@ -37,27 +37,6 @@ export const BotEmojis = {
 };
 
 export const BotPermissions: Record<AllPermissions, { name: string; description: string }> = {
-    ManageEmojisAndStickers: {
-        name: 'Manage Emojis and Stickers',
-        description: '',
-    },
-    ModerateMembers: {
-        name: 'Moderate Members',
-        description: '',
-    },
-    Stream: {
-        name: 'Stream',
-        description: '',
-    },
-    UseVAD: {
-        name: 'Use Voice Activity Detection',
-        description: '',
-    },
-    ViewCreatorMonetizationAnalytics: {
-        name: 'View Creator Monetization Analytics',
-        description: '',
-    },
-
     //* General Server Permissions
     ViewChannel: {
         name: 'View Channel',
@@ -238,7 +217,10 @@ export const BotPermissions: Record<AllPermissions, { name: string; description:
         name: 'Use Embedded Activities',
         description: 'Allows the bot to use Activities.',
     },
-    //TODO: UseExternalApps ??
+    UseExternalApps: {
+        name: 'Use External Apps',
+        description: 'Allows the bot to use external apps.',
+    },
 
     //* Stage Channel Permissions
     RequestToSpeak: {

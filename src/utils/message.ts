@@ -1,7 +1,8 @@
-import { CommandInteraction, ComponentBuilder, ComponentInteraction, Constants, FileType, Message, ModalSubmitInteraction } from 'athena';
+import { CommandInteraction, ComponentBuilder, ComponentInteraction, Constants, Message, ModalSubmitInteraction } from 'athena';
 import Stubby from '../Bot';
 import { BotColors, BotEmojis, BotPermissions } from './constants';
 import { AllPermissions } from '../types/Permissions';
+import { MessageReplyContent } from '../types/MessageTypes';
 
 type MessageContent =
     | string
@@ -199,15 +200,7 @@ export const Pagination = async (
 export const ConfirmAction = async (
     caller: Stubby,
     command: CommandInteraction | ModalSubmitInteraction | ComponentInteraction,
-    reply:
-        | (Constants.RESTPostAPIWebhookWithTokenJSONBody & {
-              embed?: Constants.APIEmbed | undefined;
-              file?: FileType | undefined;
-          })
-        | Constants.APIInteractionResponseCallbackData
-        | (Constants.RESTPostAPIChannelMessageJSONBody & {
-              embed?: Constants.APIEmbed | undefined;
-          }),
+    reply: MessageReplyContent,
     time = 60,
     edit = false,
     confirmText = 'Confirm',

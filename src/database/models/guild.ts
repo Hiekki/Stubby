@@ -9,7 +9,7 @@ export default class Guild {
         this.db = db;
     }
 
-    create(data: Omit<GuildModel, 'id' | 'logsChannel' | 'createdAt' | 'updatedAt'>) {
+    create(data: Pick<GuildModel, 'guildID' | 'guildName'>) {
         return this.db.guild.create({ data });
     }
 
