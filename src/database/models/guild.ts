@@ -1,6 +1,4 @@
-import { PrismaClient, Guild as GuildModel } from '@prisma/client';
-
-type UnchangeableFields = 'id' | 'guildID';
+import { Prisma, PrismaClient, Guild as GuildModel } from '@prisma/client';
 
 export default class Guild {
     db: PrismaClient;
@@ -9,7 +7,7 @@ export default class Guild {
         this.db = db;
     }
 
-    create(data: Pick<GuildModel, 'guildID' | 'guildName'>) {
+    create(data: Prisma.GuildCreateInput) {
         return this.db.guild.create({ data });
     }
 
@@ -21,7 +19,7 @@ export default class Guild {
         return this.db.guild.findMany();
     }
 
-    update(guildID: GuildModel['guildID'], data: Partial<Omit<GuildModel, UnchangeableFields>>) {
+    update(guildID: GuildModel['guildID'], data: Prisma.GuildUpdateInput) {
         return this.db.guild.update({ where: { guildID }, data });
     }
 

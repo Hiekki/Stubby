@@ -97,7 +97,7 @@ export default class Create extends Command<Stubby> {
 
             const ticket = await caller.database.tickets.create({
                 id: message.id,
-                guildID: interaction.guild.id,
+                guild: { connect: { guildID: interaction.guild.id } },
                 channelID: channelID,
                 title,
                 description,

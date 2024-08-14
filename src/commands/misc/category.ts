@@ -151,7 +151,7 @@ export default class Category extends Command<Stubby> {
                     embed.description = `**Label:** ${label}\n**Description:** ${description}\n**Role One:** ${roles[0].mention}\n**Role Two:** ${roles[1] ? roles[1].mention : 'No second role selected'}\n**Role Three:** ${roles[2] ? roles[2].mention : 'No third role selected'}\n**Emoji:** ${emoji ?? 'No Emoji'}\n**Custom Message:** ${custom_message ?? 'No custom message'}`;
 
                     await caller.database.categories.create({
-                        messageID: ticket.id,
+                        ticket: { connect: { id: ticket.id } },
                         label,
                         description,
                         role_one: roles[0].id,
@@ -368,8 +368,8 @@ export default class Category extends Command<Stubby> {
                 await caller.database.threads.create({
                     id: thread.id,
                     userID: user.id,
-                    categoryID: categoryID,
-                    ticketID: category.messageID,
+                    category: { connect: { id: categoryID } },
+                    ticket: { connect: { id: category.messageID } },
                     channelID: interaction.channel.id,
                 });
 

@@ -1,6 +1,4 @@
-import { PrismaClient, Threads as ThreadsModel } from '@prisma/client';
-
-type UnchangeableFields = 'createdAt' | 'updatedAt' | 'closed' | 'locked';
+import { Prisma, PrismaClient, Threads as ThreadsModel } from '@prisma/client';
 
 export default class Threads {
     db: PrismaClient;
@@ -9,7 +7,7 @@ export default class Threads {
         this.db = db;
     }
 
-    create(data: Omit<ThreadsModel, UnchangeableFields>) {
+    create(data: Prisma.ThreadsCreateInput) {
         return this.db.threads.create({ data });
     }
 
@@ -25,7 +23,7 @@ export default class Threads {
         return this.db.threads.findMany();
     }
 
-    update(id: ThreadsModel['id'], data: Pick<ThreadsModel, 'closed' | 'locked'>) {
+    update(id: ThreadsModel['id'], data: Prisma.ThreadsUpdateInput) {
         return this.db.threads.update({ where: { id }, data });
     }
 

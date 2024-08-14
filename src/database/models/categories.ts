@@ -1,6 +1,4 @@
-import { PrismaClient, Categories as CategoriesModel } from '@prisma/client';
-
-type UnchangeableFields = 'id' | 'createdAt' | 'updatedAt';
+import { Prisma, PrismaClient, Categories as CategoriesModel } from '@prisma/client';
 
 export default class Categories {
     db: PrismaClient;
@@ -9,7 +7,7 @@ export default class Categories {
         this.db = db;
     }
 
-    create(data: Omit<CategoriesModel, UnchangeableFields>) {
+    create(data: Prisma.CategoriesCreateInput) {
         return this.db.categories.create({ data });
     }
 
@@ -25,7 +23,7 @@ export default class Categories {
         return this.db.categories.findMany();
     }
 
-    update(id: CategoriesModel['id'], data: Partial<Omit<CategoriesModel, UnchangeableFields>>) {
+    update(id: CategoriesModel['id'], data: Prisma.CategoriesUpdateInput) {
         return this.db.categories.update({ where: { id }, data });
     }
 

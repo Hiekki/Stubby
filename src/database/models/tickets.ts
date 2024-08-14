@@ -1,6 +1,4 @@
-import { PrismaClient, Tickets as TicketsModel } from '@prisma/client';
-
-type UnchangeableFields = 'createdAt' | 'updatedAt';
+import { Prisma, PrismaClient, Tickets as TicketsModel } from '@prisma/client';
 
 export default class Tickets {
     db: PrismaClient;
@@ -9,7 +7,7 @@ export default class Tickets {
         this.db = db;
     }
 
-    create(data: Omit<TicketsModel, UnchangeableFields>) {
+    create(data: Prisma.TicketsCreateInput) {
         return this.db.tickets.create({ data });
     }
 
@@ -25,7 +23,7 @@ export default class Tickets {
         return this.db.tickets.findMany();
     }
 
-    update(id: TicketsModel['id'], data: Partial<Omit<TicketsModel, 'id' | UnchangeableFields>>) {
+    update(id: TicketsModel['id'], data: Prisma.TicketsUpdateInput) {
         return this.db.tickets.update({ where: { id }, data });
     }
 
