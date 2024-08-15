@@ -194,7 +194,7 @@ export default class Category extends Command<Stubby> {
 
                     if (middleware?.guild.logsChannel) {
                         await caller.bot.createMessage(middleware.guild.logsChannel, {
-                            content: `[<t:${caller.parsing.unix()}:f>] ✏️ ${user.mention} (\`${user.id}\`) edited a category in **${ticket.title}**: **${label}**`,
+                            content: `[<t:${caller.parsing.unix()}:f>] ✏️ ${user.mention} (\`${user.id}\`) edited a category in **${ticket.title}**: **${label ?? category.label}**`,
                         });
                     }
                     break;
