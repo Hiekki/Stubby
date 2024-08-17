@@ -64,7 +64,7 @@ export default class Info extends Command<Stubby> {
                             },
                             {
                                 name: 'Links',
-                                value: 'Coming Soon:tm:', //[Documentation](N/A)\n[Support Us](N/A)\n[Support Server](N/A)\n[Invite](N/A)\n[Feature Request / Bug Report](N/A)',
+                                value: '[Support Server](https://discord.gg/elenora)\n[Bot Invite](https://discord.com/oauth2/authorize?client_id=1262809684667011094)\n[Terms of Service](https://www.elenora.gg/tos)\n[Privacy Policy](https://www.elenora.gg/privacy)',
                                 inline: false,
                             },
                             {
