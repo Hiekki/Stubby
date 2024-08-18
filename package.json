@@ -1,7 +1,7 @@
 {
     "name": "stubby",
-    "version": "1.0.0",
-    "description": "Bot by Hiekki",
+    "version": "1.0.25",
+    "description": "Stubby, for all things tickets",
     "main": "index.js",
     "scripts": {
         "start": "pm2 start config.json && pm2 logs",
