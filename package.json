@@ -1,6 +1,6 @@
 {
     "name": "stubby",
-    "version": "1.0.26",
+    "version": "1.1.0",
     "description": "Stubby, for all things tickets",
     "main": "index.js",
     "scripts": {

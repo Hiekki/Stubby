@@ -17,8 +17,8 @@ export default class Info extends Command<Stubby> {
                         color: BotColors.purple,
                         fields: [
                             {
-                                name: 'Athena',
-                                value: `v${VERSION}`,
+                                name: 'Library',
+                                value: `Athena v${VERSION}`,
                                 inline: true,
                             },
                             {
