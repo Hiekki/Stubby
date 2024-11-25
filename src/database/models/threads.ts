@@ -28,6 +28,6 @@ export default class Threads {
     }
 
     delete(id: ThreadsModel['id']) {
-        return this.db.threads.update({ where: { id }, data: { deleted: true } });
+        return this.db.threads.update({ where: { id }, data: { deleted: true, closed: true } });
     }
 }
