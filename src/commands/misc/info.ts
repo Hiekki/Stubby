@@ -37,11 +37,6 @@ export default class Info extends Command<Stubby> {
                                 inline: true,
                             },
                             {
-                                name: 'DB Guilds',
-                                value: numeral((await caller.database.guild.all()).length).format('0,0'),
-                                inline: true,
-                            },
-                            {
                                 name: 'Users',
                                 //@ts-ignore --It works
                                 value: numeral(caller.bot.guilds.reduce((a, v) => a + v.memberCount, 0)).format('0,0'),
@@ -58,8 +53,15 @@ export default class Info extends Command<Stubby> {
                                 inline: true,
                             },
                             {
-                                name: 'Tickets',
+                                name: 'Total Tickets',
                                 value: numeral((await caller.database.threads.all()).length).format('0,0'),
+                                inline: true,
+                            },
+                            {
+                                name: 'Open Tickets',
+                                value: numeral((await caller.database.threads.all()).filter((ticket) => !ticket.closed).length).format(
+                                    '0,0',
+                                ),
                                 inline: true,
                             },
                             {
