@@ -5,7 +5,7 @@ export const BotColors = {
     green: 5690368,
     red: 16722730,
     yellow: 16768341,
-    purple: 7361418,
+    purple: 8140481,
     limeGreen: 2162432,
     orange: 15490071,
     white: 15987699,

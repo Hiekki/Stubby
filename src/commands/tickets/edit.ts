@@ -40,7 +40,7 @@ export default class Edit extends Command<Stubby> {
             const message = await caller.bot.getMessage(ticket.channelID, ticket.id);
             if (!message) return await ErrorMessage(command, 'Could not find a message to edit!', true);
 
-            const modal = new ModalBuilder('Create Ticket', `edit:${ticketID}`)
+            const modal = new ModalBuilder('Edit Ticket', `edit:${ticketID}`)
                 .addTextInput({
                     label: 'Title',
                     placeholder: 'What is the title of the ticket?',
