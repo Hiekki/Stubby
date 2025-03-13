@@ -14,6 +14,7 @@ import { BotColors, BotEmojis } from '../../utils/constants';
 import { ConfirmAction, ErrorMessage, SuccessMessage } from '../../utils/message';
 import moment from 'moment';
 import MiddleWareType from '../../types/MiddleWare';
+import util from 'util';
 
 type RolesCreate = [Role, Role | null, Role | null];
 type RolesEdit = [Role | null, Role | null, Role | null];
@@ -114,6 +115,8 @@ export default class Category extends Command<Stubby> {
             ]);
             if (permissions) return;
 
+            await command.defer(true).catch(() => {});
+
             const ticketID = command.getRequiredString('ticket');
             const ticket = await caller.database.tickets.get(ticketID);
             if (!ticket) return await ErrorMessage(command, 'Could not find ticket!', true);
@@ -126,7 +129,7 @@ export default class Category extends Command<Stubby> {
                 color: BotColors.purple,
                 footer: {
                     text: `${caller.bot.user?.username}`,
-                    icon_url: caller.bot.user?.dynamicAvatarURL(),
+                    icon_url: caller.bot.user?.dynamicAvatarURL(Constants.ImageFormat.PNG),
                 },
                 timestamp: new Date().toISOString(),
             };
@@ -146,6 +149,11 @@ export default class Category extends Command<Stubby> {
                         command.getRole('role_two'),
                         command.getRole('role_three'),
                     ];
+
+                    if (emoji) {
+                        const emojis = await caller.utils.validateEmoji(emoji);
+                        if (!emojis.valid) return await ErrorMessage(command, 'That is not a valid emoji that I can use.', true);
+                    }
 
                     embed.title = 'Tickets Category Created';
                     embed.description = `**Label:** ${label}\n**Description:** ${description}\n**Role One:** ${roles[0].mention}\n**Role Two:** ${roles[1] ? roles[1].mention : 'No second role selected'}\n**Role Three:** ${roles[2] ? roles[2].mention : 'No third role selected'}\n**Emoji:** ${emoji ?? 'No Emoji'}\n**Custom Message:** ${custom_message ?? 'No custom message'}`;
@@ -174,6 +182,11 @@ export default class Category extends Command<Stubby> {
                     const emoji = command.getString('emoji');
                     const custom_message = command.getString('custom_message');
                     const roles: RolesEdit = [command.getRole('role_one'), command.getRole('role_two'), command.getRole('role_three')];
+
+                    if (emoji) {
+                        const emojis = await caller.utils.validateEmoji(emoji);
+                        if (!emojis.valid) return await ErrorMessage(command, 'That is not a valid emoji that I can use.', true);
+                    }
 
                     const categoryID = Number(command.getRequiredString('category'));
                     const category = await caller.database.categories.get(categoryID);
@@ -276,15 +289,31 @@ export default class Category extends Command<Stubby> {
                     })
                     .toJSON();
 
-                await message.edit({ components });
+                try {
+                    await message.edit({ components });
+                } catch (error: any) {
+                    if (error.toString().includes('Invalid emoji')) {
+                        const categoryIndex = Object.keys(error.response.errors.components[0].components[0].options);
+
+                        for (const key of categoryIndex) {
+                            const category = categories[Number(key)];
+                            await caller.database.categories.update(category.id, { emoji: null });
+
+                            //@ts-ignore
+                            delete components[0].components[0].options[Number(key)]!.emoji;
+                        }
+                        await message.edit({ components });
+                    }
+                }
             } else await message.edit({ components: [] });
 
             if (command.subcommand != 'delete') {
                 embed.description += `\n\nSuccessfully updated the ticket: https://discord.com/channels/${ticket.guildID}/${ticket.channelID}/${ticket.id}`;
                 await command.createMessage({ embeds: [embed], components: [], flags: Constants.MessageFlags.Ephemeral });
             } else await command.editOriginalMessage({ embeds: [embed], components: [] });
-        } catch (error) {
+        } catch (error: any) {
             caller.parsing.commandError(error);
+            console.log(util.inspect(error.response.errors, false, null, true /* enable colors */));
         }
     }
 

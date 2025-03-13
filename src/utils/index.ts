@@ -1,5 +1,7 @@
+import { Guild } from 'athena';
 import Stubby from '../Bot';
 import moment from 'moment-timezone';
+import twemoji from '@twemoji/api';
 
 export default class Utils {
     bot: Stubby['bot'];
@@ -57,7 +59,8 @@ export default class Utils {
         return;
     }
 
-    parseEmoji(emoji: string) {
+    parseEmoji(emoji: string): { name: string; id: string | undefined; animated: boolean } {
+        if (!emoji.includes(':')) return { name: emoji, id: undefined, animated: false };
         const parsed = emoji.replace(/(<:)|(<)|(>)/g, '');
         const string = parsed.split(':');
         let animated = false;
@@ -68,10 +71,25 @@ export default class Utils {
             id = string[2];
             animated = true;
         }
-        return {
-            name,
-            id,
-            animated,
-        };
+        return { name, id, animated };
+    }
+
+    validateEmojis(emojis: string[]) {
+        return Promise.all(emojis.map((e) => this.validateEmoji(e)));
+    }
+
+    async validateEmoji(emoji: string) {
+        try {
+            const parsed = this.parseEmoji(emoji);
+
+            let url: string;
+            if (parsed.id) url = `https://cdn.discordapp.com/emojis/${parsed.id}.webp?size=96`;
+            else url = twemoji.parse(emoji).split('"')[7];
+
+            const response = await fetch(url);
+            return { emoji, valid: response.ok };
+        } catch (error) {
+            return { emoji, valid: false };
+        }
     }
 }

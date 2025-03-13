@@ -88,7 +88,7 @@ export default class Create extends Command<Stubby> {
                         },
                         footer: {
                             text: `${caller.bot.user?.username} • Tickets`,
-                            icon_url: caller.bot.user?.dynamicAvatarURL(),
+                            icon_url: caller.bot.user?.dynamicAvatarURL(Constants.ImageFormat.PNG),
                         },
                         timestamp: new Date().toISOString(),
                     },
