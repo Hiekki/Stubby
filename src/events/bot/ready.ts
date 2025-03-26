@@ -25,7 +25,5 @@ export default class Ready extends EventBase {
                 },
             ],
         });
-
-        caller.logger.info(`Bot ready.`);
     }
 }

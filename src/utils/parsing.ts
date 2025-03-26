@@ -1,9 +1,10 @@
-import { CommandInteraction, ComponentInteraction, Constants, ModalSubmitInteraction } from 'athena';
+import { CommandInteraction, Constants } from 'athena';
 import Stubby from '../Bot';
 import moment, { Duration } from 'moment';
 import { ErrorLogMessage, ErrorMessage, MissingPermissionsMessage } from './message';
 import { AllPermissions } from '../types/Permissions';
 import { BotColors } from './constants';
+import crypto from 'crypto';
 
 type Command = CommandInteraction;
 
@@ -22,11 +23,16 @@ export default class Parsing {
 
     commandError(error: Error | string | unknown, command: Command, name: string) {
         this.logger.error(error);
+        if (typeof error != 'object' && typeof error != 'string') error = 'Unknown Error';
+        if (error instanceof Error) error = error.message;
+
+        const ID = this.generateErrorID(error as string);
+
         ErrorLogMessage(this.caller, {
             embeds: [
                 {
                     title: 'Command Error',
-                    description: `Command: </${name}:${command.id}>\n\n\`\`\`ts\n${error}\`\`\``,
+                    description: `ID: \`${ID}\`\nCommand: </${name}:${command.id}>\n\n\`\`\`ts\n${error}\`\`\``,
                     color: BotColors.orange,
                     footer: {
                         text: `${this.caller.bot.user?.username} • Error`,
@@ -37,13 +43,16 @@ export default class Parsing {
             ],
         });
 
-        if (typeof error != 'object' && typeof error != 'string') error = 'Unknown Error';
-        if (error instanceof Error) error = error.message;
         ErrorMessage(
             command,
-            `There was an error running this command.\nIf this error continues, please feel free to join the support server [here](https://discord.gg/45N5FXe)!\n\n**Error:** ${error}`,
+            `There was an error running this command.\nIf this error continues, please feel free to join the support server [here](https://discord.gg/45N5FXe)!\n\n**Error ID:** ${ID}`,
             true,
         );
+    }
+
+    generateErrorID(error: string) {
+        const hash = crypto.createHash('md5').update(error).digest('hex');
+        return hash.substring(0, 8).toUpperCase();
     }
 
     parseID(content: string) {
