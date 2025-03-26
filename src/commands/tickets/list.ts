@@ -50,7 +50,7 @@ export default class List extends Command<Stubby> {
 
             await Pagination(caller, pages, command, user.id, true, pages.length >= 3, true);
         } catch (error) {
-            caller.parsing.commandError(error);
+            caller.parsing.commandError(error, command, this.id);
         }
     }
 }

@@ -1,8 +1,11 @@
-import { Command, CommandInteraction } from 'athena';
+import { CommandInteraction, ComponentInteraction, Constants, ModalSubmitInteraction } from 'athena';
 import Stubby from '../Bot';
 import moment, { Duration } from 'moment';
-import { ErrorMessage, MissingPermissionsMessage } from './message';
+import { ErrorLogMessage, ErrorMessage, MissingPermissionsMessage } from './message';
 import { AllPermissions } from '../types/Permissions';
+import { BotColors } from './constants';
+
+type Command = CommandInteraction;
 
 export default class Parsing {
     caller: Stubby;
@@ -17,8 +20,30 @@ export default class Parsing {
         this.logger = caller.logger;
     }
 
-    commandError(error: Error | string | unknown, command?: Command<Stubby>) {
+    commandError(error: Error | string | unknown, command: Command, name: string) {
         this.logger.error(error);
+        ErrorLogMessage(this.caller, {
+            embeds: [
+                {
+                    title: 'Command Error',
+                    description: `Command: </${name}:${command.id}>\n\n\`\`\`ts\n${error}\`\`\``,
+                    color: BotColors.orange,
+                    footer: {
+                        text: `${this.caller.bot.user?.username} • Error`,
+                        icon_url: this.caller.bot.user?.dynamicAvatarURL(Constants.ImageFormat.PNG),
+                    },
+                    timestamp: new Date().toISOString(),
+                },
+            ],
+        });
+
+        if (typeof error != 'object' && typeof error != 'string') error = 'Unknown Error';
+        if (error instanceof Error) error = error.message;
+        ErrorMessage(
+            command,
+            `There was an error running this command.\nIf this error continues, please feel free to join the support server [here](https://discord.gg/45N5FXe)!\n\n**Error:** ${error}`,
+            true,
+        );
     }
 
     parseID(content: string) {

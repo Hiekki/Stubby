@@ -105,7 +105,7 @@ export default class Logs extends Command<Stubby> {
                 }
             }
         } catch (error) {
-            caller.parsing.commandError(error);
+            caller.parsing.commandError(error, command, this.id);
         }
     }
 }

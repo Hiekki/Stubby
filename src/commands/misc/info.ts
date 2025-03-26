@@ -82,7 +82,7 @@ export default class Info extends Command<Stubby> {
                 flags: Constants.MessageFlags.Ephemeral,
             });
         } catch (error) {
-            caller.parsing.commandError(error);
+            caller.parsing.commandError(error, command, this.id);
         }
     }
 }

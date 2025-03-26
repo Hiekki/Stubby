@@ -13,11 +13,12 @@ export default class Test extends Command<Stubby> {
             const user = command.member ? command.member.user : command.user;
             if (!user) return;
 
+            throw new Error('Test Error');
             await command.createMessage({
                 content: 'Test bro!',
             });
         } catch (error) {
-            caller.parsing.commandError(error);
+            caller.parsing.commandError(error, command, this.id);
         }
     }
 }

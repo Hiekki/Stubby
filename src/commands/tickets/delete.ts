@@ -82,7 +82,7 @@ export default class Delete extends Command<Stubby> {
                 components: [],
             });
         } catch (error) {
-            caller.parsing.commandError(error);
+            caller.parsing.commandError(error, command, this.id);
         }
     }
 

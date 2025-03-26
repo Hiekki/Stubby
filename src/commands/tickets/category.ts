@@ -6,6 +6,7 @@ import {
     ComponentBuilder,
     ComponentInteraction,
     Constants,
+    Message,
     Role,
     ThreadChannel,
 } from 'athena';
@@ -14,7 +15,7 @@ import { BotColors, BotEmojis } from '../../utils/constants';
 import { ConfirmAction, ErrorMessage, SuccessMessage } from '../../utils/message';
 import moment from 'moment';
 import MiddleWareType from '../../types/MiddleWare';
-import util from 'util';
+import { error_bnb } from '../../utils/error_bnb';
 
 type RolesCreate = [Role, Role | null, Role | null];
 type RolesEdit = [Role | null, Role | null, Role | null];
@@ -270,51 +271,54 @@ export default class Category extends Command<Stubby> {
                 }
             }
 
-            const categories = await caller.database.categories.allMessage(ticket.id);
-            if (categories.length) {
-                const components = new ComponentBuilder('category')
-                    .addActionRow((row) => {
-                        row.addStringSelect({
-                            custom_id: 'select',
-                            placeholder: 'Select an option to open a ticket.',
-                            options: categories.map((category) => {
-                                return {
-                                    label: category.label,
-                                    value: `${category.id}`,
-                                    description: category.description,
-                                    emoji: category.emoji ? caller.utils.parseEmoji(category.emoji) : undefined,
-                                };
-                            }),
-                        });
-                    })
-                    .toJSON();
+            const { categories, components } = await this.handleCategories(caller, ticket.id);
 
-                try {
-                    await message.edit({ components });
-                } catch (error: any) {
-                    if (error.toString().includes('Invalid emoji')) {
-                        const categoryIndex = Object.keys(error.response.errors.components[0].components[0].options);
+            const { error } = await error_bnb<Message, any>(message.edit({ components }));
+            if (error) {
+                if (error.toString().includes('Invalid emoji')) {
+                    const categoryIndex = Object.keys(error.response.errors.components[0].components[0].options);
 
-                        for (const key of categoryIndex) {
-                            const category = categories[Number(key)];
-                            await caller.database.categories.update(category.id, { emoji: null });
-
-                            //@ts-ignore
-                            delete components[0].components[0].options[Number(key)]!.emoji;
-                        }
-                        await message.edit({ components });
+                    for (const key of categoryIndex) {
+                        const category = categories[Number(key)];
+                        await caller.database.categories.update(category.id, { emoji: null });
+                        //@ts-ignore
+                        delete components[0].components[0].options[Number(key)]!.emoji;
                     }
-                }
-            } else await message.edit({ components: [] });
+
+                    await message.edit({ components });
+                } else return caller.parsing.commandError(error, command, this.id);
+            }
 
             if (command.subcommand != 'delete') {
                 embed.description += `\n\nSuccessfully updated the ticket: https://discord.com/channels/${ticket.guildID}/${ticket.channelID}/${ticket.id}`;
                 await command.createMessage({ embeds: [embed], components: [], flags: Constants.MessageFlags.Ephemeral });
             } else await command.editOriginalMessage({ embeds: [embed], components: [] });
         } catch (error: any) {
-            caller.parsing.commandError(error);
-            console.log(util.inspect(error.response.errors, false, null, true /* enable colors */));
+            caller.parsing.commandError(error, command, this.id);
         }
+    }
+
+    async handleCategories(caller: Stubby, id: string) {
+        const categories = await caller.database.categories.allMessage(id);
+        if (categories.length) {
+            const components = new ComponentBuilder('category')
+                .addActionRow((row) => {
+                    row.addStringSelect({
+                        custom_id: 'select',
+                        placeholder: 'Select an option to open a ticket.',
+                        options: categories.map((category) => {
+                            return {
+                                label: category.label,
+                                value: `${category.id}`,
+                                description: category.description,
+                                emoji: category.emoji ? caller.utils.parseEmoji(category.emoji) : undefined,
+                            };
+                        }),
+                    });
+                })
+                .toJSON();
+            return { categories, components };
+        } else return { categories, components: [] };
     }
 
     async handleAutocomplete(caller: Stubby, interaction: AutocompleteInteraction) {
@@ -426,7 +430,7 @@ export default class Category extends Command<Stubby> {
                             },
                             footer: {
                                 text: `${caller.bot.user?.username} • Tickets`,
-                                icon_url: caller.bot.user?.dynamicAvatarURL(),
+                                icon_url: caller.bot.user?.dynamicAvatarURL(Constants.ImageFormat.PNG),
                             },
                             timestamp: new Date().toISOString(),
                         },

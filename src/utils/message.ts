@@ -14,6 +14,10 @@ export const StatusMessage = async (caller: Stubby, content: MessageContent) => 
     return await caller.bot.createMessage(caller.config.CHANNEL.STATUS, content);
 };
 
+export const ErrorLogMessage = async (caller: Stubby, content: MessageContent) => {
+    return await caller.bot.createMessage(caller.config.CHANNEL.ERROR, content);
+};
+
 export const SuccessMessage = async (
     command: CommandInteraction | ModalSubmitInteraction | ComponentInteraction,
     content: string,

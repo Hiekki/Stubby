@@ -18,7 +18,6 @@ export const BotColors = {
     nitroPink: 16023551,
     sharkleberryFin: 16720194,
     zendeskBlue: 79419,
-    hydraGreen: 2275133,
 };
 
 export const BotEmojis = {
