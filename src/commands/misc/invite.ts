@@ -29,7 +29,7 @@ export default class Invite extends Command<Stubby> {
                 flags: Constants.MessageFlags.Ephemeral,
             });
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }

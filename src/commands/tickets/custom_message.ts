@@ -58,7 +58,7 @@ export default class CustomMessage extends Command<Stubby> {
 
             await command.createModal(modal.toJSON());
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 

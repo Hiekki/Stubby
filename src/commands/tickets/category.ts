@@ -286,15 +286,17 @@ export default class Category extends Command<Stubby> {
                     }
 
                     await message.edit({ components });
-                } else return caller.parsing.commandError(error, command, this.id);
+                } else return await caller.parsing.commandError(error, command, this.id);
             }
 
             if (command.subcommand != 'delete') {
                 embed.description += `\n\nSuccessfully updated the ticket: https://discord.com/channels/${ticket.guildID}/${ticket.channelID}/${ticket.id}`;
                 await command.createMessage({ embeds: [embed], components: [], flags: Constants.MessageFlags.Ephemeral });
             } else await command.editOriginalMessage({ embeds: [embed], components: [] });
+
+            await caller.database.tickets.update(ticketID, { title: ticket.title });
         } catch (error: any) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 

@@ -14,6 +14,10 @@ export const StatusMessage = async (caller: Stubby, content: MessageContent) => 
     return await caller.bot.createMessage(caller.config.CHANNEL.STATUS, content);
 };
 
+export const GuildMessage = async (caller: Stubby, content: MessageContent) => {
+    return await caller.bot.createMessage(caller.config.CHANNEL.GUILD, content);
+};
+
 export const ErrorLogMessage = async (caller: Stubby, content: MessageContent) => {
     return await caller.bot.createMessage(caller.config.CHANNEL.ERROR, content);
 };

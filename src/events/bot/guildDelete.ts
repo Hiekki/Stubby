@@ -3,6 +3,7 @@ import { Constants, Events, Guild } from 'athena';
 import Stubby from '../../Bot';
 import { BotColors } from '../../utils/constants/index';
 import moment from 'moment';
+import { GuildMessage } from '../../utils/message';
 
 export default class GuildCreate extends EventBase {
     name: keyof Events = 'guildDelete';
@@ -13,7 +14,7 @@ export default class GuildCreate extends EventBase {
 
         caller.logger.info(`Left guild - ${guild.name} (${guild.id})`);
 
-        caller.bot.createMessage(caller.config.CHANNEL.GUILD, {
+        await GuildMessage(caller, {
             embeds: [
                 {
                     color: BotColors.red,

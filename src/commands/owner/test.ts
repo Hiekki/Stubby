@@ -15,7 +15,7 @@ export default class Test extends Command<Stubby> {
 
             await command.createMessage({ content: 'Test bro!' });
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }

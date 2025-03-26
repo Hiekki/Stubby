@@ -35,7 +35,7 @@ export default class Logs extends Command<Stubby> {
                         const botPermissions = channel.permissionsOf(caller.bot.user.id);
                         const missingPermissions = botPermissions.missing('SendMessages', 'ViewChannel');
                         if (missingPermissions.length) {
-                            return MissingPermissionsMessage(command, missingPermissions as AllPermissions[], true);
+                            return await MissingPermissionsMessage(command, missingPermissions as AllPermissions[], true);
                         }
                     }
 
@@ -105,7 +105,7 @@ export default class Logs extends Command<Stubby> {
                 }
             }
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }

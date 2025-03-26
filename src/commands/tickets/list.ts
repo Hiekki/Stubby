@@ -38,7 +38,7 @@ export default class List extends Command<Stubby> {
                     },
                     fields: ticket.categories.map((category) => ({
                         name: `__${category.label}__`,
-                        value: `>>> **Description:** ${category.description}\n**Role One:** <@&${category.role_one}>${category.role_two ? `\n**Role Two:** <@&${category.role_two}>` : ''}${category.role_three ? `\n**Role Three:** <@&${category.role_three}>` : ''}${category.emoji ? `\n**Emoji:** ${category.emoji}` : ''}${category.custom_message ? `\n**Custom Message:** ${category.custom_message}` : ''}`,
+                        value: `>>> **Description:** ${category.description}\n**Role One:** <@&${category.role_one}>${category.role_two ? `\n**Role Two:** <@&${category.role_two}>` : ''}${category.role_three ? `\n**Role Three:** <@&${category.role_three}>` : ''}${category.emoji ? `\n**Emoji:** ${category.emoji}` : ''}${category.custom_message ? `\n**Custom Message:** ${category.custom_message.substring(0, 25)}${category.custom_message.length > 25 ? '...' : ''}` : ''}`,
                     })),
                     footer: {
                         text: `${caller.bot.user?.username} • Tickets`,
@@ -50,7 +50,7 @@ export default class List extends Command<Stubby> {
 
             await Pagination(caller, pages, command, user.id, true, pages.length >= 3, true);
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }

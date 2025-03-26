@@ -21,14 +21,14 @@ export default class Parsing {
         this.logger = caller.logger;
     }
 
-    commandError(error: Error | string | unknown, command: Command, name: string) {
+    async commandError(error: Error | string | unknown, command: Command, name: string) {
         this.logger.error(error);
         if (typeof error != 'object' && typeof error != 'string') error = 'Unknown Error';
         if (error instanceof Error) error = error.message;
 
         const ID = this.generateErrorID(error as string);
 
-        ErrorLogMessage(this.caller, {
+        await ErrorLogMessage(this.caller, {
             embeds: [
                 {
                     title: 'Command Error',
@@ -43,7 +43,7 @@ export default class Parsing {
             ],
         });
 
-        ErrorMessage(
+        await ErrorMessage(
             command,
             `There was an error running this command.\nIf this error continues, please feel free to join the support server [here](https://discord.gg/45N5FXe)!\n\n**Error ID:** ${ID}`,
             true,

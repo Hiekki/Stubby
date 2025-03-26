@@ -2,6 +2,7 @@ import EventBase from '../../types/EventBase';
 import { Constants, Events } from 'athena';
 import Stubby from '../../Bot';
 import { BotColors } from '../../utils/constants/index';
+import { StatusMessage } from '../../utils/message';
 
 export default class Ready extends EventBase {
     name: keyof Events = 'ready';
@@ -16,7 +17,7 @@ export default class Ready extends EventBase {
         if (caller.config.FORCE_DEPLOY) await caller.bot.deployCommands();
         if (caller.dev) return;
 
-        caller.bot.createMessage(caller.config.CHANNEL.STATUS, {
+        await StatusMessage(caller, {
             embeds: [
                 {
                     title: `${caller.bot.user?.username} Ready`,

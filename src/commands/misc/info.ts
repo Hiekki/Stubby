@@ -66,7 +66,7 @@ export default class Info extends Command<Stubby> {
                             },
                             {
                                 name: 'Links',
-                                value: '[Support Server](https://discord.gg/elenora)\n[Bot Invite](https://discord.com/oauth2/authorize?client_id=1262809684667011094)\n[Terms of Service](https://www.elenora.gg/tos)\n[Privacy Policy](https://www.elenora.gg/privacy)',
+                                value: '[Support Server](https://discord.gg/45N5FXe)\n[Bot Invite](https://discord.com/oauth2/authorize?client_id=1262809684667011094)\n[Terms of Service](https://www.elenora.gg/tos)\n[Privacy Policy](https://www.elenora.gg/privacy)',
                                 inline: false,
                             },
                             {
@@ -82,7 +82,7 @@ export default class Info extends Command<Stubby> {
                 flags: Constants.MessageFlags.Ephemeral,
             });
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }

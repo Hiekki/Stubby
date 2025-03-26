@@ -23,7 +23,7 @@ export default class Template extends Command<Stubby> {
                 content: 'Hello!',
             });
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }

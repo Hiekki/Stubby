@@ -29,7 +29,7 @@ export default class Developer extends Command<Stubby> {
             if (!user) return;
 
             if (!caller.config.ADMINS.includes(user.id)) {
-                return ErrorMessage(command, 'You do not have permission to use this command.', true);
+                return await ErrorMessage(command, 'You do not have permission to use this command.', true);
             }
 
             switch (command.subcommand) {
@@ -166,7 +166,7 @@ export default class Developer extends Command<Stubby> {
                 }
             }
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }

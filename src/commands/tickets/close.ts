@@ -48,7 +48,7 @@ export default class Close extends Command<Stubby> {
                     }, 5 * 1000);
                 } catch (error) {
                     caller.logger.error(error);
-                    return await ErrorMessage(command, 'Failed to delete ticket!', true);
+                    return await ErrorMessage(command, 'Failed to delete the ticket!', true);
                 }
             } else {
                 try {
@@ -66,11 +66,11 @@ export default class Close extends Command<Stubby> {
                     }, 5 * 1000);
                 } catch (error) {
                     caller.logger.error(error);
-                    return await ErrorMessage(command, `Failed to ${isLock ? 'lock' : 'close'} ticket!`, true);
+                    return await ErrorMessage(command, `Failed to ${isLock ? 'lock' : 'close'} the ticket!`, true);
                 }
             }
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }

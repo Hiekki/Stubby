@@ -32,7 +32,7 @@ export default class Help extends Command<Stubby> {
             });
             await command.createMessage({ embeds: pages, components: [] });
         } catch (error) {
-            caller.parsing.commandError(error, command, this.id);
+            await caller.parsing.commandError(error, command, this.id);
         }
     }
 }
