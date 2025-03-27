@@ -6,8 +6,6 @@ import { AllPermissions } from '../types/Permissions';
 import { BotColors } from './constants';
 import crypto from 'crypto';
 
-type Command = CommandInteraction;
-
 export default class Parsing {
     caller: Stubby;
     bot: Stubby['bot'];
@@ -21,7 +19,7 @@ export default class Parsing {
         this.logger = caller.logger;
     }
 
-    async commandError(error: Error | string | unknown, command: Command, name: string) {
+    async commandError(error: Error | string | unknown, command: CommandInteraction, name: string) {
         this.logger.error(error);
         if (typeof error != 'object' && typeof error != 'string') error = 'Unknown Error';
         if (error instanceof Error) error = error.message;

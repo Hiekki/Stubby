@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import Logger from 'logger';
+import { Logger, LEVEL } from '@elenoragroup/logger';
 
 import Utils from './utils/index';
 import Parsing from './utils/parsing';
@@ -18,7 +18,7 @@ export default class Stubby {
     config = config;
     dev = config.DEV;
     bot: CommandClient<Stubby>;
-    logger = Logger;
+    logger = Logger.createInstance();
 
     database: Database;
 
@@ -27,6 +27,7 @@ export default class Stubby {
     events = new Map<string, EventBase>();
 
     constructor() {
+        this.logger.level = LEVEL.debug;
         this.utils = new Utils(this);
         this.bot = new CommandClient({
             token: `Bot ${this.config.TOKEN}`,

@@ -12,6 +12,8 @@ export default class Error extends EventBase {
         if (!this.enabled) return;
 
         caller.logger.error(error);
+        if (caller.dev) return;
+
         await ErrorLogMessage(caller, {
             embeds: [
                 {

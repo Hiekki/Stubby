@@ -37,7 +37,7 @@ export default class CommandErrorEvent extends EventBase {
                 });
                 break;
             }
-            default:
+            default: {
                 caller.logger.warning(`Command ${command} errored`);
                 caller.logger.error(error);
                 await ErrorLogMessage(caller, {
@@ -54,6 +54,7 @@ export default class CommandErrorEvent extends EventBase {
                         },
                     ],
                 });
+            }
         }
     }
 }
